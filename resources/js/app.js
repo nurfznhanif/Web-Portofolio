@@ -1,31 +1,29 @@
 import "./bootstrap";
-import { createApp } from "vue";
-import { createRouter, createWebHistory } from "vue-router";
-import Portfolio from "./views/Portfolio.vue";
-import Admin from "./views/Admin.vue";
 import "../css/app.css";
 
-// Create Vue Router
-const router = createRouter({
-    history: createWebHistory(),
-    routes: [
-        {
-            path: "/",
-            name: "Portfolio",
-            component: Portfolio,
-        },
-        {
-            path: "/admin",
-            name: "Admin",
-            component: Admin,
-        },
-    ],
-});
+import { createApp, h } from "vue";
+import { createInertiaApp } from "@inertiajs/vue3";
+import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 
-// Create Vue app instance directly
-const app = createApp({
-    template: "<router-view />",
-});
+const appName = import.meta.env.VITE_APP_NAME || "Laravel";
 
-// Use router and mount
-app.use(router).mount("#app");
+createInertiaApp({
+    title: (title) => `${title} - ${appName}`,
+    resolve: (name) =>
+        resolvePageComponent(
+            `./Pages/${name}.vue`,
+            import.meta.glob("./Pages/**/*.vue")
+        ),
+    setup({ el, App, props, plugin }) {
+        return (
+            createApp({ render: () => h(App, props) })
+                .use(plugin)
+                // Comment out Ziggy until package is installed
+                // .use(ZiggyVue)
+                .mount(el)
+        );
+    },
+    progress: {
+        color: "#dc2626",
+    },
+});

@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Session;
+use Inertia\Inertia;
 
 class AuthController extends Controller
 {
@@ -16,46 +15,24 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($request->only('email', 'password'))) {
+        if (Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             $request->session()->regenerate();
-            $user = Auth::user();
 
-            return response()->json([
-                'success' => true,
-                'user' => $user,
-                'message' => 'Login successful'
-            ]);
+            return redirect()->intended(route('admin.dashboard'));
         }
 
-        return response()->json([
-            'success' => false,
-            'message' => 'Invalid credentials'
-        ], 401);
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
     }
 
     public function logout(Request $request)
     {
         Auth::logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Logged out successfully'
-        ]);
-    }
-
-    public function check()
-    {
-        if (Auth::check()) {
-            return response()->json([
-                'authenticated' => true,
-                'user' => Auth::user()
-            ]);
-        }
-
-        return response()->json([
-            'authenticated' => false
-        ]);
+        return redirect()->route('portfolio');
     }
 }
