@@ -8,6 +8,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Call all seeders in correct order
         $this->call([
             UserSeeder::class,
             ProfileSeeder::class,
