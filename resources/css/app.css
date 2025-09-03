@@ -1,0 +1,37 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap");
+
+body {
+    font-family: "Crimson Text", serif;
+}
+
+.gothic-title {
+    font-family: "Cinzel", serif;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.gothic-bg {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d1b1b 50%, #1a1a1a 100%);
+}
+
+.gothic-card {
+    background: rgba(45, 27, 27, 0.9);
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+/* Dark scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #dc2626;
+    border-radius: 4px;
+}
