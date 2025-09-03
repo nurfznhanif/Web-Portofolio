@@ -112,64 +112,87 @@
 
           <Link
             :href="route('admin.profile.edit')"
-            class="flex items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-red-500 hover:bg-red-50 transition-colors group"
+            class="flex items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors group"
           >
             <i
-              class="fas fa-edit text-gray-400 group-hover:text-red-500 mr-3"
+              class="fas fa-edit text-gray-400 group-hover:text-orange-500 mr-3"
             ></i>
-            <span class="text-gray-600 group-hover:text-red-700 font-medium"
+            <span class="text-gray-600 group-hover:text-orange-700 font-medium"
               >Edit Profile</span
             >
           </Link>
         </div>
       </div>
 
-      <!-- Recent Projects -->
-      <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-semibold text-gray-900">Recent Projects</h2>
-          <Link
-            :href="route('admin.projects.index')"
-            class="text-blue-600 hover:text-blue-800 text-sm"
-          >
-            View all
-          </Link>
-        </div>
-        <div class="space-y-3">
-          <div
-            v-for="project in recentProjects"
-            :key="project.id"
-            class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-          >
-            <div class="flex items-center">
-              <div
-                class="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center"
-              >
-                <i class="fas fa-project-diagram text-white text-sm"></i>
-              </div>
-              <div class="ml-3">
-                <p class="text-sm font-medium text-gray-900">
+      <!-- Recent Data Overview -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Recent Projects -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-900">Recent Projects</h2>
+            <Link
+              :href="route('admin.projects.index')"
+              class="text-blue-600 hover:text-blue-700 text-sm font-medium"
+            >
+              View All
+            </Link>
+          </div>
+          <div class="space-y-3">
+            <div
+              v-for="project in projects"
+              :key="project.id"
+              class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
+            >
+              <div>
+                <h3 class="text-sm font-medium text-gray-900">
                   {{ project.title }}
-                </p>
+                </h3>
                 <p class="text-xs text-gray-500">
-                  {{ formatDate(project.created_at) }}
+                  {{ project.technologies.join(", ") }}
                 </p>
               </div>
-            </div>
-            <div class="flex items-center space-x-2">
               <span
                 v-if="project.featured"
-                class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800"
+                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
               >
                 <i class="fas fa-star mr-1"></i>
                 Featured
               </span>
-              <Link
-                :href="route('admin.projects.edit', project.id)"
-                class="text-blue-600 hover:text-blue-800"
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Experiences -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-900">
+              Recent Experiences
+            </h2>
+            <Link
+              :href="route('admin.experiences.index')"
+              class="text-blue-600 hover:text-blue-700 text-sm font-medium"
+            >
+              View All
+            </Link>
+          </div>
+          <div class="space-y-3">
+            <div
+              v-for="experience in experiences"
+              :key="experience.id"
+              class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
+            >
+              <div>
+                <h3 class="text-sm font-medium text-gray-900">
+                  {{ experience.title }}
+                </h3>
+                <p class="text-xs text-gray-500">{{ experience.company }}</p>
+              </div>
+              <span
+                v-if="experience.is_current"
+                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
               >
-                <i class="fas fa-edit"></i>
-              </Link>
+                Current
+              </span>
             </div>
           </div>
         </div>
@@ -179,30 +202,13 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
 import { Head, Link } from "@inertiajs/vue3";
-import AdminLayout from "@/Layouts/AdminLayout.vue";
+import AdminLayout from "../../Layouts/AdminLayout.vue";
 
-const props = defineProps({
+defineProps({
   projects: Array,
   experiences: Array,
   skills: Array,
+  stats: Object,
 });
-
-const stats = computed(() => ({
-  projects: props.projects.length,
-  experiences: props.experiences.length,
-  skills: props.skills.length,
-  featured_projects: props.projects.filter((p) => p.featured).length,
-}));
-
-const recentProjects = computed(() => {
-  return props.projects
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-    .slice(0, 5);
-});
-
-const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString();
-};
 </script>
