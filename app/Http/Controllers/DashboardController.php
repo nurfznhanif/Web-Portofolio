@@ -2,30 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Project, Experience, Skill};
+use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Portfolio;
+use App\Models\Experience;
+use App\Models\Skill;
 
 class DashboardController extends Controller
 {
-    public function __invoke()
+    public function index()
     {
-        $projects = Project::orderBy('created_at', 'desc')->get();
-        $experiences = Experience::orderBy('start_date', 'desc')->get();
-        $skills = Skill::all();
-
-        // Calculate statistics
         $stats = [
-            'projects' => $projects->count(),
-            'experiences' => $experiences->count(),
-            'skills' => $skills->count(),
-            'featured_projects' => $projects->where('featured', true)->count(),
+            'portfolios' => Portfolio::count(),
+            'experiences' => Experience::count(),
+            'skills' => Skill::count(),
+            'recent_portfolios' => Portfolio::latest()->take(5)->get(),
         ];
 
-        return Inertia::render('Admin/Dashboard', [
-            'projects' => $projects->take(5), // Show only latest 5 for performance
-            'experiences' => $experiences->take(5),
-            'skills' => $skills->take(10),
-            'stats' => $stats,
+        return Inertia::render('Dashboard/Index', [
+            'stats' => $stats
         ]);
     }
 }
