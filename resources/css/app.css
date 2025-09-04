@@ -28,6 +28,289 @@
     --shadow-heavy: 0 32px 64px rgba(0, 0, 0, 0.3);
 }
 
+/* ===== TAMBAHKAN DI BAGIAN AWAL CSS SETELAH ROOT VARIABLES ===== */
+
+/* Navbar and Hero Section Spacing Fixes */
+.fixed-navbar {
+    height: 64px; /* 4rem - Fixed navbar height */
+    z-index: 50;
+}
+
+/* Hero section spacing improvements - GANTI BAGIAN INI */
+#home {
+    /* Padding top yang cukup untuk menghindari navbar */
+    padding-top: 7rem !important; /* 112px - lebih dari tinggi navbar */
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Availability badge spacing - TAMBAH CLASS BARU INI */
+.availability-badge {
+    margin-top: 1.5rem; /* 24px spacing dari atas container */
+    margin-bottom: 1.5rem; /* 24px spacing ke heading */
+    display: inline-block;
+}
+
+/* Enhanced badge styling - TAMBAH CLASS BARU INI */
+.modern-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.875rem 1.75rem; /* Lebih besar untuk breathing room */
+    border-radius: 9999px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(147, 51, 234, 0.25));
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    color: rgb(147, 197, 253);
+    font-size: 0.875rem;
+    font-weight: 600;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15), 0 0 20px rgba(59, 130, 246, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.modern-badge:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.35), rgba(147, 51, 234, 0.35));
+    border-color: rgba(59, 130, 246, 0.5);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px rgba(59, 130, 246, 0.25), 0 0 30px rgba(59, 130, 246, 0.15);
+}
+
+/* Content spacing improvements - TAMBAH CLASS BARU INI */
+.hero-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem; /* Consistent spacing antar elemen */
+}
+
+.hero-content > * + * {
+    margin-top: 0; /* Reset default margins */
+}
+
+/* Heading spacing improvements - MODIFIKASI YANG SUDAH ADA */
+.hero-title {
+    margin-top: 2rem !important;
+    margin-bottom: 1.5rem !important;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+
+.hero-subtitle {
+    margin-top: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+.hero-description {
+    margin-top: 1.5rem !important;
+    margin-bottom: 2.5rem !important;
+    max-width: 42rem;
+}
+
+/* Stats section spacing - TAMBAH CLASS BARU INI */
+.hero-stats {
+    margin-top: 2.5rem !important;
+    margin-bottom: 2.5rem !important;
+    padding: 2rem 0;
+}
+
+/* CTA buttons spacing - TAMBAH CLASS BARU INI */
+.hero-cta {
+    margin-top: 2rem !important;
+    gap: 1rem;
+}
+
+/* ===== MODIFIKASI BAGIAN SCROLL BEHAVIOR YANG SUDAH ADA ===== */
+/* Smooth scrolling with proper navbar offset */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem !important; /* Increased from 80px to 96px */
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Section scroll offset - MODIFIKASI YANG SUDAH ADA */
+section[id] {
+    scroll-margin-top: 6rem !important; /* Increased for better spacing */
+}
+
+/* ===== TAMBAH DI BAGIAN RESPONSIVE ===== */
+/* Responsive spacing adjustments - TAMBAH SECTION BARU INI */
+@media (max-width: 640px) {
+    #home {
+        padding-top: 5.5rem !important; /* 88px untuk mobile */
+        padding-bottom: 2rem;
+    }
+
+    .availability-badge,
+    .modern-badge {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        padding: 0.75rem 1.5rem;
+        font-size: 0.8rem;
+    }
+
+    .hero-title {
+        margin-top: 1.5rem !important;
+        margin-bottom: 1rem !important;
+    }
+
+    .hero-subtitle {
+        margin-top: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+
+    .hero-description {
+        margin-top: 1rem !important;
+        margin-bottom: 2rem !important;
+    }
+
+    .hero-stats {
+        margin-top: 2rem !important;
+        margin-bottom: 2rem !important;
+        padding: 1.5rem 0;
+    }
+
+    .hero-cta {
+        margin-top: 1.5rem !important;
+    }
+
+    html {
+        scroll-padding-top: 5rem !important;
+    }
+
+    section[id] {
+        scroll-margin-top: 5rem !important;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+    #home {
+        padding-top: 6rem !important; /* 96px untuk tablet */
+    }
+
+    .availability-badge,
+    .modern-badge {
+        margin-top: 1.25rem;
+        margin-bottom: 1.25rem;
+    }
+
+    html {
+        scroll-padding-top: 5.5rem !important;
+    }
+
+    section[id] {
+        scroll-margin-top: 5.5rem !important;
+    }
+}
+
+@media (min-width: 1024px) {
+    #home {
+        padding-top: 8rem !important; /* 128px untuk desktop besar */
+    }
+
+    .availability-badge,
+    .modern-badge {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+        padding: 1rem 2rem;
+        font-size: 0.9rem;
+    }
+
+    .hero-title {
+        margin-top: 2.5rem !important;
+        margin-bottom: 2rem !important;
+    }
+
+    .hero-stats {
+        margin-top: 3rem !important;
+        margin-bottom: 3rem !important;
+        padding: 2.5rem 0;
+    }
+
+    html {
+        scroll-padding-top: 7rem !important;
+    }
+
+    section[id] {
+        scroll-margin-top: 7rem !important;
+    }
+}
+
+/* ===== TAMBAH ANIMATION UNTUK BADGE ===== */
+/* Badge glow animation - TAMBAH DI BAGIAN ANIMATIONS */
+@keyframes badge-glow {
+    0%, 100% {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15), 0 0 20px rgba(59, 130, 246, 0.1);
+    }
+    50% {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15), 0 0 30px rgba(59, 130, 246, 0.2), 0 0 40px rgba(147, 51, 234, 0.1);
+    }
+}
+
+.modern-badge {
+    animation: badge-glow 4s ease-in-out infinite;
+}
+
+/* ===== PERBAIKAN GLASSMORPHISM UNTUK NAVBAR ===== */
+/* Enhanced glassmorphism untuk navbar - MODIFIKASI YANG SUDAH ADA */
+.glassmorphism {
+    background: rgba(15, 15, 35, 0.85) !important;
+    backdrop-filter: blur(28px) !important;
+    -webkit-backdrop-filter: blur(28px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ===== MOBILE MENU SPACING ===== */
+/* Mobile menu considerations - TAMBAH SECTION BARU INI */
+.mobile-menu-open #home {
+    padding-top: 10rem !important; /* Extra space ketika mobile menu terbuka */
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-open #home {
+        padding-top: 12rem !important;
+    }
+}
+
+/* ===== CONTAINER IMPROVEMENTS ===== */
+/* Container spacing improvements - MODIFIKASI YANG SUDAH ADA JIKA PERLU */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+    .container {
+        padding: 0 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        padding: 0 2rem;
+    }
+}
+
+/* ===== PHOTO SECTION SPACING ===== */
+/* Photo section spacing untuk balance dengan content - TAMBAH CLASS BARU */
+.hero-photo-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 0;
+}
+
+@media (min-width: 1024px) {
+    .hero-photo-section {
+        justify-content: flex-end;
+        padding: 0;
+    }
+}
+
 /* Base Styles */
 * {
     box-sizing: border-box;

@@ -1,15 +1,16 @@
 <template>
-  <nav class="fixed top-0 w-full z-50 glassmorphism border-b border-white/10">
-    <div class="container mx-auto px-4 lg:px-6">
-      <div class="flex justify-between items-center h-16">
+  <!-- Modern Navigation with proper spacing -->
+  <nav class="fixed top-0 w-full z-50 glassmorphism border-b border-white/10 h-16">
+    <div class="container mx-auto px-4 lg:px-6 h-full">
+      <div class="flex justify-between items-center h-full">
         <!-- Logo -->
-        <div class="flex items-center space-x-2">
+        <div class="flex items-center space-x-3">
           <div
-            class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center"
+            class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0"
           >
             <span class="text-white font-bold text-sm">NH</span>
           </div>
-          <span class="text-white font-semibold hidden sm:block">{{
+          <span class="text-white font-semibold hidden sm:block text-lg">{{
             profileName
           }}</span>
         </div>
@@ -20,7 +21,7 @@
             v-for="item in navItems"
             :key="item.id"
             :href="item.href"
-            class="nav-link text-gray-300 hover:text-white transition-all duration-300 text-sm font-medium hover:scale-105"
+            class="nav-link text-gray-300 hover:text-white transition-all duration-300 text-sm font-medium hover:scale-105 py-2"
             @click="handleNavClick"
           >
             {{ item.label }}
@@ -30,7 +31,7 @@
         <!-- Mobile Menu Button -->
         <button
           @click="toggleMobileMenu"
-          class="md:hidden p-2 rounded-lg bg-white/10 backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
+          class="md:hidden p-2 rounded-lg bg-white/10 backdrop-blur-sm transition-all duration-300 hover:bg-white/20 w-10 h-10 flex items-center justify-center"
         >
           <div class="w-5 h-5 flex flex-col justify-center items-center">
             <span
@@ -55,7 +56,7 @@
         </button>
       </div>
 
-      <!-- Mobile Menu -->
+      <!-- Mobile Menu with proper spacing -->
       <transition
         enter-active-class="transition ease-out duration-300"
         enter-from-class="opacity-0 transform -translate-y-4"
@@ -66,14 +67,14 @@
       >
         <div
           v-if="showMobileMenu"
-          class="md:hidden pb-4 border-t border-white/10 mt-2"
+          class="md:hidden border-t border-white/10 bg-gray-900/95 backdrop-blur-md"
         >
-          <div class="flex flex-col space-y-2 pt-4">
+          <div class="flex flex-col space-y-1 py-4 px-4">
             <a
               v-for="item in navItems"
               :key="item.id"
               :href="item.href"
-              class="text-gray-300 hover:text-white transition-all duration-300 py-3 px-4 rounded-lg hover:bg-white/10 font-medium"
+              class="text-gray-300 hover:text-white transition-all duration-300 py-3 px-4 rounded-lg hover:bg-white/10 font-medium text-base"
               @click="closeMobileMenu"
             >
               {{ item.label }}
@@ -124,7 +125,16 @@ const handleNavClick = (event) => {
     event.preventDefault();
     const target = document.querySelector(href);
     if (target) {
-      target.scrollIntoView({ behavior: "smooth" });
+      // Calculate offset for fixed navbar
+      const navbarHeight = 64; // 4rem = 64px
+      const elementPosition = target.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - navbarHeight - 16; // Extra 16px spacing
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+
       // Close mobile menu if open
       closeMobileMenu();
     }
@@ -139,15 +149,16 @@ defineExpose({
 </script>
 
 <style scoped>
-/* Navigation link styles */
+/* Navigation link styles with better spacing */
 .nav-link {
   position: relative;
+  padding: 0.5rem 0;
 }
 
 .nav-link::after {
   content: "";
   position: absolute;
-  bottom: -4px;
+  bottom: -2px;
   left: 0;
   width: 0;
   height: 2px;
@@ -168,57 +179,34 @@ defineExpose({
   width: 100%;
 }
 
-/* Mobile menu animation improvements */
+/* Glassmorphism effect with proper backdrop */
+.glassmorphism {
+  background: rgba(15, 15, 35, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* Mobile menu improvements */
 .mobile-menu-item {
   transform: translateX(-10px);
   opacity: 0;
   animation: slideInLeft 0.3s ease forwards;
 }
 
-.mobile-menu-item:nth-child(1) {
-  animation-delay: 0.1s;
-}
-.mobile-menu-item:nth-child(2) {
-  animation-delay: 0.2s;
-}
-.mobile-menu-item:nth-child(3) {
-  animation-delay: 0.3s;
-}
-.mobile-menu-item:nth-child(4) {
-  animation-delay: 0.4s;
-}
-.mobile-menu-item:nth-child(5) {
-  animation-delay: 0.5s;
-}
-.mobile-menu-item:nth-child(6) {
-  animation-delay: 0.6s;
-}
+.mobile-menu-item:nth-child(1) { animation-delay: 0.1s; }
+.mobile-menu-item:nth-child(2) { animation-delay: 0.2s; }
+.mobile-menu-item:nth-child(3) { animation-delay: 0.3s; }
+.mobile-menu-item:nth-child(4) { animation-delay: 0.4s; }
+.mobile-menu-item:nth-child(5) { animation-delay: 0.5s; }
+.mobile-menu-item:nth-child(6) { animation-delay: 0.6s; }
 
 @keyframes slideInLeft {
   to {
     transform: translateX(0);
     opacity: 1;
   }
-}
-
-/* Glassmorphism effect */
-.glassmorphism {
-  background: rgba(15, 15, 35, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Hover effects */
-button:hover {
-  transform: scale(1.05);
-}
-
-/* Focus states for accessibility */
-button:focus,
-a:focus {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
 }
 
 /* Mobile optimizations */

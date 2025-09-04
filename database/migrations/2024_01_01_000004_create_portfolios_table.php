@@ -1,4 +1,5 @@
 <?php
+// File: database/migrations/2024_01_01_000004_create_portfolios_table.php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
