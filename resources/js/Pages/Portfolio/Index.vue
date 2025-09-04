@@ -34,11 +34,66 @@
               >Skills</a
             >
           </div>
+          <!-- Mobile Menu Button -->
+          <button
+            @click="toggleMobileMenu"
+            class="md:hidden text-white hover:text-red-400 transition-colors"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div v-if="showMobileMenu" class="md:hidden mt-4 pb-4">
+          <div class="flex flex-col space-y-2">
+            <a
+              href="#home"
+              @click="closeMobileMenu"
+              class="text-gray-300 hover:text-red-400 transition-colors py-2"
+              >Home</a
+            >
+            <a
+              href="#about"
+              @click="closeMobileMenu"
+              class="text-gray-300 hover:text-red-400 transition-colors py-2"
+              >About</a
+            >
+            <a
+              href="#portfolio"
+              @click="closeMobileMenu"
+              class="text-gray-300 hover:text-red-400 transition-colors py-2"
+              >Portfolio</a
+            >
+            <a
+              href="#experience"
+              @click="closeMobileMenu"
+              class="text-gray-300 hover:text-red-400 transition-colors py-2"
+              >Experience</a
+            >
+            <a
+              href="#skills"
+              @click="closeMobileMenu"
+              class="text-gray-300 hover:text-red-400 transition-colors py-2"
+              >Skills</a
+            >
+          </div>
         </div>
       </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- Hero Section with Photo -->
     <section
       id="home"
       class="min-h-screen flex items-center justify-center relative overflow-hidden"
@@ -46,33 +101,79 @@
       <div
         class="absolute inset-0 bg-gradient-to-br from-red-900/20 to-black/50"
       ></div>
-      <div class="container mx-auto px-6 text-center relative z-10">
-        <div class="animate-fade-in-up">
-          <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 font-serif">
-            {{ profile.name }}
-          </h1>
-          <p class="text-xl md:text-2xl text-red-400 mb-8 font-light">
-            {{ profile.title }}
-          </p>
-          <p
-            class="text-lg text-gray-300 max-w-3xl mx-auto mb-10 leading-relaxed"
-          >
-            {{ profile.summary }}
-          </p>
-          <div class="flex justify-center space-x-6">
-            <a
-              :href="profile.github"
-              target="_blank"
-              class="blood-red-gradient px-8 py-3 text-white font-semibold rounded-lg hover:scale-105 transition-transform shadow-lg animate-shadow-pulse"
-            >
-              View GitHub
-            </a>
-            <a
-              href="#portfolio"
-              class="border-2 border-red-600 px-8 py-3 text-red-400 hover:bg-red-600 hover:text-white transition-all rounded-lg"
-            >
-              View Portfolio
-            </a>
+
+      <div class="container mx-auto px-6 relative z-10">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <!-- Photo Section -->
+          <div class="flex justify-center lg:justify-end order-2 lg:order-1">
+            <div class="relative animate-fade-in-up">
+              <!-- Photo Container with Gothic Frame Effect -->
+              <div class="relative">
+                <!-- Gothic Border Effect -->
+                <div
+                  class="absolute -inset-4 bg-gradient-to-r from-red-600 via-red-800 to-red-600 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"
+                ></div>
+
+                <!-- Photo -->
+                <div class="relative bg-gray-900 rounded-2xl p-2">
+                  <img
+                    :src="profilePhoto"
+                    :alt="profile.name"
+                    class="w-80 h-80 lg:w-96 lg:h-96 object-cover rounded-xl shadow-2xl"
+                    @error="handleImageError"
+                  />
+
+                  <!-- Overlay Gradient -->
+                  <div
+                    class="absolute inset-2 bg-gradient-to-t from-black/20 to-transparent rounded-xl pointer-events-none"
+                  ></div>
+                </div>
+
+                <!-- Floating Elements -->
+                <div
+                  class="absolute -top-6 -right-6 w-12 h-12 bg-red-600 rounded-full animate-pulse"
+                ></div>
+                <div
+                  class="absolute -bottom-4 -left-4 w-8 h-8 bg-red-400 rounded-full animate-bounce"
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Text Content -->
+          <div class="text-center lg:text-left order-1 lg:order-2">
+            <div class="animate-fade-in-up">
+              <h1
+                class="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 font-serif"
+              >
+                {{ profile.name }}
+              </h1>
+              <p class="text-xl md:text-2xl text-red-400 mb-8 font-light">
+                {{ profile.title }}
+              </p>
+              <p
+                class="text-lg text-gray-300 max-w-2xl mx-auto lg:mx-0 mb-10 leading-relaxed"
+              >
+                {{ profile.summary }}
+              </p>
+              <div
+                class="flex flex-col sm:flex-row justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-6"
+              >
+                <a
+                  :href="profile.github"
+                  target="_blank"
+                  class="blood-red-gradient px-8 py-3 text-white font-semibold rounded-lg hover:scale-105 transition-transform shadow-lg animate-shadow-pulse"
+                >
+                  View GitHub
+                </a>
+                <a
+                  href="#portfolio"
+                  class="border-2 border-red-600 px-8 py-3 text-red-400 hover:bg-red-600 hover:text-white transition-all rounded-lg"
+                >
+                  View Portfolio
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -84,53 +185,72 @@
         <h2 class="text-4xl font-bold text-center text-white mb-16 font-serif">
           About Me
         </h2>
-        <div class="grid md:grid-cols-2 gap-12 items-center">
-          <div class="gothic-card p-8 rounded-xl">
-            <h3 class="text-2xl font-bold text-red-400 mb-4">Education</h3>
-            <div class="space-y-4 text-gray-300">
-              <div>
-                <h4 class="font-semibold text-white">
-                  {{ profile.education.degree }}
-                </h4>
-                <p class="text-red-300">{{ profile.education.university }}</p>
-                <p class="text-sm">IPK: {{ profile.education.gpa }}</p>
+        <div class="grid lg:grid-cols-3 gap-12">
+          <!-- Profile Summary with small photo -->
+          <div class="lg:col-span-1">
+            <div class="gothic-card p-6 rounded-xl text-center">
+              <div class="mb-6">
+                <img
+                  :src="profilePhoto"
+                  :alt="profile.name"
+                  class="w-32 h-32 object-cover rounded-full mx-auto border-4 border-red-600/50 shadow-lg"
+                  @error="handleImageError"
+                />
               </div>
-              <div>
-                <h5 class="font-semibold text-white mb-2">Thesis:</h5>
-                <p class="text-sm leading-relaxed">
-                  {{ profile.education.thesis }}
-                </p>
+              <h3 class="text-xl font-bold text-red-400 mb-2">
+                {{ profile.name }}
+              </h3>
+              <p class="text-gray-300 mb-4">{{ profile.title }}</p>
+              <div class="space-y-2 text-sm text-gray-400">
+                <div class="flex items-center justify-center">
+                  <span class="text-red-400 mr-2">📧</span>
+                  <a
+                    :href="'mailto:' + profile.email"
+                    class="hover:text-red-400 transition-colors"
+                  >
+                    {{ profile.email }}
+                  </a>
+                </div>
+                <div class="flex items-center justify-center">
+                  <span class="text-red-400 mr-2">📱</span>
+                  <span>{{ profile.phone }}</span>
+                </div>
+                <div class="flex items-center justify-center">
+                  <span class="text-red-400 mr-2">📍</span>
+                  <span>{{ profile.location }}</span>
+                </div>
               </div>
             </div>
           </div>
-          <div class="gothic-card p-8 rounded-xl">
-            <h3 class="text-2xl font-bold text-red-400 mb-4">Contact Info</h3>
-            <div class="space-y-3 text-gray-300">
-              <div class="flex items-center">
-                <span class="text-red-400 mr-3">📧</span>
-                <a
-                  :href="'mailto:' + profile.email"
-                  class="hover:text-red-400 transition-colors"
-                >
-                  {{ profile.email }}
-                </a>
-              </div>
-              <div class="flex items-center">
-                <span class="text-red-400 mr-3">📱</span>
-                <span>{{ profile.phone }}</span>
-              </div>
-              <div class="flex items-center">
-                <span class="text-red-400 mr-3">📍</span>
-                <span>{{ profile.location }}</span>
+
+          <!-- Education & Details -->
+          <div class="lg:col-span-2 space-y-8">
+            <div class="gothic-card p-8 rounded-xl">
+              <h3 class="text-2xl font-bold text-red-400 mb-4">Education</h3>
+              <div class="space-y-4 text-gray-300">
+                <div>
+                  <h4 class="font-semibold text-white text-lg">
+                    {{ profile.education.degree }}
+                  </h4>
+                  <p class="text-red-300">{{ profile.education.university }}</p>
+                  <p class="text-sm">IPK: {{ profile.education.gpa }}</p>
+                </div>
+                <div>
+                  <h5 class="font-semibold text-white mb-2">Thesis:</h5>
+                  <p class="text-sm leading-relaxed">
+                    {{ profile.education.thesis }}
+                  </p>
+                </div>
               </div>
             </div>
-            <div class="mt-6">
-              <h4 class="font-semibold text-white mb-3">Interests</h4>
-              <div class="flex flex-wrap gap-2">
+
+            <div class="gothic-card p-8 rounded-xl">
+              <h3 class="text-2xl font-bold text-red-400 mb-4">Interests</h3>
+              <div class="flex flex-wrap gap-3">
                 <span
                   v-for="interest in profile.interests"
                   :key="interest"
-                  class="px-3 py-1 bg-red-900/30 text-red-300 rounded-full text-sm border border-red-800"
+                  class="px-4 py-2 bg-red-900/30 text-red-300 rounded-full text-sm border border-red-800 hover:bg-red-800/30 transition-colors"
                 >
                   {{ interest }}
                 </span>
@@ -388,10 +508,10 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 // Props
-defineProps({
+const props = defineProps({
   portfolios: Array,
   experiences: Array,
   skills: Object,
@@ -400,6 +520,12 @@ defineProps({
 
 // State
 const selectedProject = ref(null);
+const showMobileMenu = ref(false);
+
+// Computed
+const profilePhoto = computed(() => {
+  return "/images/poto1.png";
+});
 
 // Methods
 const showProject = (project) => {
@@ -408,6 +534,20 @@ const showProject = (project) => {
 
 const closeModal = () => {
   selectedProject.value = null;
+};
+
+const toggleMobileMenu = () => {
+  showMobileMenu.value = !showMobileMenu.value;
+};
+
+const closeMobileMenu = () => {
+  showMobileMenu.value = false;
+};
+
+const handleImageError = (event) => {
+  console.warn("Image failed to load:", event.target.src);
+  // Fallback to a placeholder or hide the image
+  event.target.style.display = "none";
 };
 
 const formatDate = (date) => {
@@ -434,5 +574,23 @@ const getSkillWidth = (level) => {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+@keyframes tilt {
+  0%,
+  50%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(1deg);
+  }
+  75% {
+    transform: rotate(-1deg);
+  }
+}
+
+.animate-tilt {
+  animation: tilt 10s infinite linear;
 }
 </style>

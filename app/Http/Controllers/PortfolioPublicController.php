@@ -23,6 +23,7 @@ class PortfolioPublicController extends Controller
             'phone' => '+62 812-3456-7890',
             'location' => 'Pekanbaru, Riau, Indonesia',
             'github' => 'https://github.com/nurfznhanif',
+            'photo' => '/images/poto1.png', // Path to the photo
             'education' => [
                 'degree' => 'S1 Teknik Informatika',
                 'university' => 'Universitas Islam Riau',
