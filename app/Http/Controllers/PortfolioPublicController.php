@@ -5,63 +5,58 @@ namespace App\Http\Controllers;
 use App\Models\Portfolio;
 use App\Models\Experience;
 use App\Models\Skill;
+use App\Models\ProfileSetting;
+use App\Models\SocialLink;
+use App\Models\Achievement;
+use App\Models\Language;
+use App\Models\Interest;
+use App\Models\Certification;
+use App\Models\ContactMessage;
+use App\Models\PortfolioAnalytic;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 
 class PortfolioPublicController extends Controller
 {
     /**
-     * Display the modern portfolio page
+     * Display the modern portfolio page - Now fully dynamic
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            // Cache portfolio data for better performance (1 hour)
-            $portfolioData = Cache::remember('modern_portfolio_data', 3600, function () {
+            // Track page view
+            $this->trackEvent('page_view', 'portfolio_home', null, $request->ip());
+
+            // Cache key with version for easy invalidation
+            $cacheKey = 'dynamic_portfolio_data_v2';
+            $cacheDuration = (int) ProfileSetting::getValue('cache_duration', 3600);
+
+            // Get portfolio data from cache or database
+            $portfolioData = Cache::remember($cacheKey, $cacheDuration, function () {
                 return [
-                    'portfolios' => Portfolio::select([
-                        'id',
-                        'title',
-                        'description',
-                        'technologies',
-                        'challenges',
-                        'solutions',
-                        'github_url',
-                        'project_type',
-                        'project_date',
-                        'created_at'
-                    ])->orderBy('project_date', 'desc')->get(),
-
-                    'experiences' => Experience::select([
-                        'id',
-                        'position',
-                        'organization',
-                        'description',
-                        'start_date',
-                        'end_date',
-                        'is_current'
-                    ])->orderBy('start_date', 'desc')->get(),
-
-                    'skills' => Skill::select([
-                        'id',
-                        'name',
-                        'category',
-                        'level'
-                    ])->orderBy('category')->orderBy('name')->get()->groupBy('category'),
+                    'portfolios' => $this->getPortfoliosData(),
+                    'experiences' => $this->getExperiencesData(),
+                    'skills' => $this->getSkillsData(),
                 ];
             });
 
-            // Enhanced profile data with comprehensive information
-            $profile = $this->getEnhancedProfileData();
+            // Get dynamic profile data
+            $profile = $this->getDynamicProfileData();
 
-            // Calculate dynamic statistics
-            $statistics = $this->calculatePortfolioStatistics($portfolioData);
+            // Calculate statistics
+            $statistics = $this->calculateDynamicStatistics($portfolioData);
 
-            // Generate meta data for SEO
-            $metaData = $this->generateMetaData($profile, $statistics);
+            // Generate meta data
+            $metaData = $this->generateDynamicMetaData($profile, $statistics);
+
+            // Get configuration settings
+            $config = $this->getConfigurationSettings();
 
             return Inertia::render('Portfolio/Index', [
                 'portfolios' => $portfolioData['portfolios'],
@@ -70,35 +65,284 @@ class PortfolioPublicController extends Controller
                 'profile' => $profile,
                 'statistics' => $statistics,
                 'meta' => $metaData,
-                'config' => [
-                    'app_name' => config('app.name'),
-                    'app_url' => config('app.url'),
-                    'contact_email' => config('portfolio.contact_email', 'nrfznhnf@gmail.com'),
-                    'github_username' => config('portfolio.github_username', 'nurfznhanif'),
-                    'enable_contact_form' => config('portfolio.enable_contact_form', true),
-                    'enable_animations' => config('portfolio.enable_animations', true),
-                    'theme' => config('portfolio.theme', 'modern'),
-                ]
+                'config' => $config,
+                'socialLinks' => $this->getSocialLinksData(),
+                'achievements' => $this->getAchievementsData(),
+                'languages' => $this->getLanguagesData(),
+                'interests' => $this->getInterestsData(),
+                'certifications' => $this->getCertificationsData(),
             ]);
         } catch (\Exception $e) {
-            Log::error('Portfolio index error: ' . $e->getMessage());
+            Log::error('Dynamic portfolio index error: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
 
-            // Fallback to basic data if cache fails
             return $this->fallbackPortfolioData();
         }
     }
 
     /**
-     * API endpoint for portfolio data
+     * Enhanced contact form handling with dynamic settings
+     */
+    public function contact(Request $request)
+    {
+        try {
+            // Check if contact form is enabled
+            if (!ProfileSetting::getValue('enable_contact_form', true)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Contact form is currently disabled.'
+                ], 503);
+            }
+
+            // Enhanced rate limiting
+            $key = 'contact_form_' . $request->ip();
+            $maxAttempts = 5;
+            $decayMinutes = 60;
+
+            if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
+                $seconds = RateLimiter::availableIn($key);
+                return response()->json([
+                    'success' => false,
+                    'message' => "Too many contact attempts. Please try again in " . ceil($seconds / 60) . " minutes."
+                ], 429);
+            }
+
+            // Validate input
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|max:255|min:2|regex:/^[\pL\s\-]+$/u',
+                'email' => 'required|email:rfc,dns|max:255',
+                'subject' => 'nullable|string|max:255|min:3',
+                'message' => 'required|string|max:2000|min:10',
+                'honeypot' => 'nullable|max:0', // Honeypot field for bot detection
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Please check your input and try again.',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            $validated = $validator->validated();
+
+            // Check for spam patterns
+            if ($this->detectSpam($validated)) {
+                Log::warning('Spam detected in contact form', [
+                    'email' => $validated['email'],
+                    'ip' => $request->ip()
+                ]);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Your message appears to be spam. Please try again with a genuine message.'
+                ], 422);
+            }
+
+            // Hit rate limiter
+            RateLimiter::hit($key, $decayMinutes * 60);
+
+            // Enhanced data collection
+            $contactData = [
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'subject' => $validated['subject'] ?? 'Portfolio Contact',
+                'message' => $validated['message'],
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'referrer' => $request->header('referer'),
+                'country' => $request->header('cf-ipcountry'),
+                'status' => 'new'
+            ];
+
+            // Save to database
+            $contactMessage = ContactMessage::create($contactData);
+
+            // Track contact event
+            $this->trackEvent('contact_form_submission', 'contact', [
+                'message_id' => $contactMessage->id,
+                'has_subject' => !empty($validated['subject'])
+            ], $request->ip());
+
+            // Log contact attempt with comprehensive data
+            Log::info('Portfolio contact form submission', [
+                'message_id' => $contactMessage->id,
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'subject' => $validated['subject'] ?? 'Portfolio Contact',
+                'message_length' => strlen($validated['message']),
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'timestamp' => now()->toISOString(),
+                'referrer' => $request->header('referer'),
+                'country' => $request->header('cf-ipcountry'),
+            ]);
+
+            // Send email notification (implement as needed)
+            $this->sendContactNotification($contactMessage);
+
+            // Send auto-reply to user
+            $this->sendAutoReply($contactMessage);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Thank you for your message! I will get back to you within 24 hours.',
+                'data' => [
+                    'sent_at' => now()->toISOString(),
+                    'message_id' => $contactMessage->id,
+                    'reference' => 'MSG-' . strtoupper(Str::random(8))
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Contact form error: ' . $e->getMessage(), [
+                'request_data' => $request->except(['password', 'token']),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, there was an error sending your message. Please try again later.'
+            ], 500);
+        }
+    }
+
+    /**
+     * Download CV/Resume with analytics
+     */
+    public function downloadCV(Request $request)
+    {
+        try {
+            // Track download
+            $this->trackEvent('cv_download', 'download', [
+                'user_agent' => $request->userAgent(),
+                'referrer' => $request->header('referer')
+            ], $request->ip());
+
+            // Get CV path from settings
+            $cvPath = ProfileSetting::getValue('cv_file_path', 'documents/Nurfauzan_Hanif_CV.pdf');
+            $cvFileName = ProfileSetting::getValue('cv_file_name', 'Nurfauzan_Hanif_CV.pdf');
+
+            // Check multiple possible locations
+            $possiblePaths = [
+                public_path($cvPath),
+                public_path('documents/Nurfauzan_Hanif_CV_Modern.pdf'),
+                storage_path('app/public/' . $cvPath),
+                public_path('storage/' . $cvPath),
+            ];
+
+            $actualPath = null;
+            foreach ($possiblePaths as $path) {
+                if (file_exists($path)) {
+                    $actualPath = $path;
+                    break;
+                }
+            }
+
+            if (!$actualPath) {
+                Log::warning('CV file not found at any location', [
+                    'searched_paths' => $possiblePaths,
+                    'ip' => $request->ip()
+                ]);
+
+                return response()->json(['error' => 'CV not available for download'], 404);
+            }
+
+            // Log download attempt
+            Log::info('CV download', [
+                'file_path' => $actualPath,
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'timestamp' => now(),
+                'referrer' => $request->header('referer')
+            ]);
+
+            return response()->download($actualPath, $cvFileName, [
+                'Content-Type' => 'application/pdf',
+                'Cache-Control' => 'public, max-age=3600',
+                'Content-Disposition' => 'attachment; filename="' . $cvFileName . '"'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('CV download error: ' . $e->getMessage(), [
+                'ip' => $request->ip(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+
+            return response()->json(['error' => 'Failed to download CV'], 500);
+        }
+    }
+
+    /**
+     * Get project details with analytics
+     */
+    public function showProject(Request $request, $id)
+    {
+        try {
+            $project = Portfolio::findOrFail($id);
+
+            // Track project view
+            $this->trackEvent('project_view', 'project_detail', [
+                'project_id' => $project->id,
+                'project_title' => $project->title,
+                'project_type' => $project->project_type
+            ], $request->ip());
+
+            // Get related projects
+            $relatedProjects = Portfolio::where('project_type', $project->project_type)
+                ->where('id', '!=', $project->id)
+                ->orderBy('project_date', 'desc')
+                ->limit(3)
+                ->get(['id', 'title', 'description', 'project_type', 'project_date', 'technologies']);
+
+            $projectData = [
+                'project' => $project,
+                'related' => $relatedProjects,
+                'meta' => [
+                    'title' => $project->title . ' - ' . ProfileSetting::getValue('name', 'Portfolio'),
+                    'description' => Str::limit(strip_tags($project->description), 160),
+                    'image' => ProfileSetting::getValue('photo', asset('images/default-avatar.png')),
+                    'url' => url()->current()
+                ]
+            ];
+
+            if ($request->expectsJson()) {
+                return response()->json($projectData);
+            }
+
+            return Inertia::render('Portfolio/ProjectDetail', $projectData);
+        } catch (\Exception $e) {
+            Log::error('Show project error: ' . $e->getMessage(), [
+                'project_id' => $id,
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'Project not found'], 404);
+            }
+
+            return redirect()->route('portfolio.index')
+                ->with('error', 'Project not found');
+        }
+    }
+
+    /**
+     * API endpoint with enhanced filtering
      */
     public function api(Request $request)
     {
         try {
             $type = $request->get('type', 'all');
-            $limit = $request->get('limit', 10);
+            $limit = (int) $request->get('limit', ProfileSetting::getValue('items_per_page', 10));
             $search = $request->get('search', '');
+            $category = $request->get('category', '');
 
-            $data = Cache::remember("portfolio_api_{$type}_{$limit}_{$search}", 1800, function () use ($type, $limit, $search) {
+            $cacheKey = "portfolio_api_{$type}_{$limit}_{$search}_{$category}";
+            $data = Cache::remember($cacheKey, 1800, function () use ($type, $limit, $search, $category) {
                 $query = Portfolio::query();
 
                 // Apply search filter
@@ -142,194 +386,52 @@ class PortfolioPublicController extends Controller
     }
 
     /**
-     * Handle contact form submission
+     * Clear cache with better management
      */
-    public function contact(Request $request)
+    public function clearCache(Request $request)
     {
         try {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255|min:2',
-                'email' => 'required|email:rfc,dns|max:255',
-                'subject' => 'nullable|string|max:255',
-                'message' => 'required|string|max:2000|min:10',
-            ]);
+            // Only allow if authenticated (add auth middleware)
+            $patterns = [
+                'dynamic_portfolio_data_v2',
+                'portfolio_api_*',
+                'dynamic_profile_data',
+                'portfolio_stats_*',
+                'social_links_data',
+                'achievements_data',
+                'languages_data',
+                'interests_data',
+                'certifications_data'
+            ];
 
-            // Rate limiting check
-            $key = 'contact_form_' . $request->ip();
-            if (Cache::get($key, 0) >= 5) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Too many contact attempts. Please try again later.'
-                ], 429);
-            }
-
-            Cache::put($key, Cache::get($key, 0) + 1, 3600); // 1 hour
-
-            // Log contact attempt with comprehensive data
-            Log::info('Portfolio contact form submission', [
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'subject' => $validated['subject'] ?? 'Portfolio Contact',
-                'message_length' => strlen($validated['message']),
-                'ip' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-                'timestamp' => now()->toISOString(),
-                'referrer' => $request->header('referer'),
-                'country' => $request->header('cf-ipcountry'), // If using Cloudflare
-            ]);
-
-            // Here you could integrate with email services like:
-            // - Mail::send() for Laravel Mail
-            // - Notification system
-            // - Third-party services (SendGrid, Mailgun, etc.)
-            // - Save to database for admin dashboard
-
-            // For now, we'll simulate email sending
-            $this->simulateEmailSending($validated, $request);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Thank you for your message! I will get back to you within 24 hours.',
-                'data' => [
-                    'sent_at' => now()->toISOString(),
-                    'message_id' => uniqid('msg_')
-                ]
-            ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Please check your input and try again.',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            Log::error('Contact form error: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, there was an error sending your message. Please try again later.'
-            ], 500);
-        }
-    }
-
-    /**
-     * Download CV/Resume
-     */
-    public function downloadCV()
-    {
-        try {
-            $cvPath = public_path('documents/Nurfauzan_Hanif_CV_Modern.pdf');
-
-            if (!file_exists($cvPath)) {
-                // Try alternative locations
-                $alternativePaths = [
-                    storage_path('app/public/documents/Nurfauzan_Hanif_CV.pdf'),
-                    public_path('storage/documents/CV.pdf'),
-                ];
-
-                foreach ($alternativePaths as $path) {
-                    if (file_exists($path)) {
-                        $cvPath = $path;
-                        break;
+            $clearedCount = 0;
+            foreach ($patterns as $pattern) {
+                if (str_contains($pattern, '*')) {
+                    // For wildcard patterns, we'd need a more sophisticated approach
+                    // For now, clear known variations
+                    $basePattern = str_replace('*', '', $pattern);
+                    Cache::forget($basePattern);
+                    $clearedCount++;
+                } else {
+                    if (Cache::forget($pattern)) {
+                        $clearedCount++;
                     }
                 }
             }
 
-            if (!file_exists($cvPath)) {
-                Log::warning('CV file not found at any location');
-                return response()->json(['error' => 'CV not available'], 404);
-            }
-
-            // Log download attempt
-            Log::info('CV download', [
-                'ip' => request()->ip(),
-                'user_agent' => request()->userAgent(),
+            // Log cache clear
+            Log::info('Portfolio cache cleared', [
+                'cleared_count' => $clearedCount,
+                'patterns' => $patterns,
+                'ip' => $request->ip(),
                 'timestamp' => now()
             ]);
-
-            return response()->download($cvPath, 'Nurfauzan_Hanif_CV.pdf', [
-                'Content-Type' => 'application/pdf',
-                'Cache-Control' => 'public, max-age=3600'
-            ]);
-        } catch (\Exception $e) {
-            Log::error('CV download error: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to download CV'], 500);
-        }
-    }
-
-    /**
-     * Get project by ID with related projects
-     */
-    public function showProject(Request $request, $id)
-    {
-        try {
-            $project = Portfolio::findOrFail($id);
-
-            // Get related projects (same type, excluding current)
-            $relatedProjects = Portfolio::where('project_type', $project->project_type)
-                ->where('id', '!=', $project->id)
-                ->orderBy('project_date', 'desc')
-                ->limit(3)
-                ->get(['id', 'title', 'description', 'project_type', 'project_date', 'technologies']);
-
-            $projectData = [
-                'project' => $project,
-                'related' => $relatedProjects,
-                'meta' => [
-                    'title' => $project->title . ' - Nurfauzan Hanif Portfolio',
-                    'description' => substr(strip_tags($project->description), 0, 160),
-                    'image' => asset('images/poto1.png'),
-                ]
-            ];
-
-            if ($request->expectsJson()) {
-                return response()->json($projectData);
-            }
-
-            return Inertia::render('Portfolio/ProjectDetail', $projectData);
-        } catch (\Exception $e) {
-            Log::error('Show project error: ' . $e->getMessage());
-
-            if ($request->expectsJson()) {
-                return response()->json(['error' => 'Project not found'], 404);
-            }
-
-            return redirect()->route('portfolio.index')->with('error', 'Project not found');
-        }
-    }
-
-    /**
-     * Clear portfolio cache (for admin/automated cleanup)
-     */
-    public function clearCache()
-    {
-        try {
-            $cacheKeys = [
-                'modern_portfolio_data',
-                'portfolio_api_*',
-                'portfolio_stats',
-            ];
-
-            foreach ($cacheKeys as $key) {
-                if (str_contains($key, '*')) {
-                    // Clear pattern-based cache keys
-                    $pattern = str_replace('*', '', $key);
-                    Cache::forget($pattern);
-                } else {
-                    Cache::forget($key);
-                }
-            }
-
-            // Clear project type and skill category caches
-            $projectTypes = Portfolio::distinct()->pluck('project_type');
-            foreach ($projectTypes as $type) {
-                Cache::forget("portfolio_api_{$type}_*");
-            }
-
-            Log::info('Portfolio cache cleared');
 
             return response()->json([
                 'success' => true,
-                'message' => 'Portfolio cache cleared successfully',
-                'timestamp' => now()
+                'message' => "Portfolio cache cleared successfully. {$clearedCount} cache keys cleared.",
+                'timestamp' => now(),
+                'cleared_count' => $clearedCount
             ]);
         } catch (\Exception $e) {
             Log::error('Cache clear error: ' . $e->getMessage());
@@ -338,7 +440,7 @@ class PortfolioPublicController extends Controller
     }
 
     /**
-     * Health check endpoint
+     * Enhanced health check
      */
     public function health()
     {
@@ -350,14 +452,29 @@ class PortfolioPublicController extends Controller
                     'portfolios' => Portfolio::count(),
                     'experiences' => Experience::count(),
                     'skills' => Skill::count(),
-                    'database' => 'connected',
+                    'profile_settings' => ProfileSetting::count(),
+                    'social_links' => SocialLink::active()->count(),
+                    'achievements' => Achievement::active()->count(),
+                    'languages' => Language::active()->count(),
+                    'interests' => Interest::active()->count(),
+                    'certifications' => Certification::active()->count(),
+                    'contact_messages' => ContactMessage::count(),
+                    'unread_messages' => ContactMessage::unread()->count(),
+                    'database' => 'connected'
                 ],
                 'performance' => [
-                    'memory_usage' => memory_get_usage(true),
-                    'peak_memory' => memory_get_peak_usage(true),
-                    'cache_status' => Cache::store()->getStore() ? 'connected' : 'disconnected',
+                    'memory_usage' => $this->formatBytes(memory_get_usage(true)),
+                    'peak_memory' => $this->formatBytes(memory_get_peak_usage(true)),
+                    'cache_status' => Cache::getStore() ? 'connected' : 'disconnected',
                 ],
-                'version' => '2.0.0'
+                'configuration' => [
+                    'contact_form_enabled' => ProfileSetting::getValue('enable_contact_form', true),
+                    'analytics_enabled' => ProfileSetting::getValue('enable_analytics', true),
+                    'animations_enabled' => ProfileSetting::getValue('enable_animations', true),
+                    'theme' => ProfileSetting::getValue('theme', 'modern'),
+                    'cache_duration' => ProfileSetting::getValue('cache_duration', 3600),
+                ],
+                'version' => '2.1.0'
             ];
 
             return response()->json($health);
@@ -367,269 +484,224 @@ class PortfolioPublicController extends Controller
             return response()->json([
                 'status' => 'unhealthy',
                 'error' => 'Service temporarily unavailable',
-                'timestamp' => now()->toISOString()
+                'timestamp' => now()->toISOString(),
+                'message' => config('app.debug') ? $e->getMessage() : 'Internal server error'
             ], 500);
         }
     }
 
     /**
-     * Get enhanced profile data
+     * Analytics endpoint for admin dashboard
      */
-    private function getEnhancedProfileData()
+    public function analytics(Request $request)
     {
-        return [
-            // Personal Information
-            'name' => 'Nurfauzan Hanif',
-            'title' => 'Informatics Engineer',
-            'summary' => 'Fresh Graduate of Informatics Engineering at Universitas Islam Riau with a strong foundation in full-stack development, AI/ML, and data analysis. Graduated with a 3.76 GPA and equipped with hands-on experience in modern web technologies, mobile development, and research methodologies. Open to career opportunities where I can contribute my technical expertise, problem-solving skills, and passion for innovation to deliver impactful solutions.',
+        try {
+            $days = (int) $request->get('days', 30);
+            $eventType = $request->get('event_type', null);
 
-            // Contact Information
-            'email' => 'nrfznhnf@gmail.com',
-            'phone' => '0822-8568-5679',
-            'location' => 'Pekanbaru, Riau, Indonesia',
-            'github' => 'https://github.com/nurfznhanif',
-            'linkedin' => 'https://linkedin.com/in/nurfauzan-hanif',
-            'portfolio_url' => config('app.url'),
+            $analytics = PortfolioAnalytic::when($eventType, function ($query) use ($eventType) {
+                return $query->byEventType($eventType);
+            })->lastDays($days)->get();
 
-            // Professional Images
-            'photo' => '/images/poto1.png',
-            'avatar' => '/images/poto1.png',
-            'cover_image' => '/images/cover-bg.jpg',
+            $stats = [
+                'total_views' => $analytics->where('event_type', 'page_view')->count(),
+                'unique_visitors' => $analytics->where('event_type', 'page_view')->unique('ip_address')->count(),
+                'cv_downloads' => $analytics->where('event_type', 'cv_download')->count(),
+                'contact_forms' => $analytics->where('event_type', 'contact_form_submission')->count(),
+                'project_views' => $analytics->where('event_type', 'project_view')->count(),
+                'popular_projects' => $analytics->where('event_type', 'project_view')
+                    ->groupBy('data.project_id')
+                    ->map->count()
+                    ->sortDesc()
+                    ->take(5),
+                'daily_stats' => $analytics->groupBy(function ($item) {
+                    return $item->created_at->format('Y-m-d');
+                })->map->count(),
+                'top_referrers' => $analytics->whereNotNull('referrer')
+                    ->groupBy('referrer')
+                    ->map->count()
+                    ->sortDesc()
+                    ->take(10)
+            ];
 
-            // Academic Information
-            'education' => [
-                'degree' => 'S1 Teknik Informatika',
-                'university' => 'Universitas Islam Riau',
-                'faculty' => 'Fakultas Teknik',
-                'gpa' => '3.76',
-                'status' => 'Final Year Student',
-                'graduation_year' => '2025',
-                'start_year' => '2021',
-                'thesis' => 'Analisis Sentimen Berbasis Aspek terhadap Diskursus Generasi Emas 2045 di Media Sosial menggunakan Latent Dirichlet Allocation dan Bidirectional Encoder Representations from Transformers (BERT)',
-                'thesis_en' => 'Aspect-Based Sentiment Analysis of Golden Generation 2045 Discourse on Social Media using Latent Dirichlet Allocation and BERT',
-                'research_interests' => [
-                    'Natural Language Processing',
-                    'Sentiment Analysis',
-                    'Machine Learning',
-                    'Social Media Analytics'
-                ]
-            ],
+            return response()->json([
+                'success' => true,
+                'data' => $stats,
+                'period' => "{$days} days",
+                'generated_at' => now()
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Analytics error: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to fetch analytics'], 500);
+        }
+    }
 
-            // Professional Interests & Expertise Areas
-            'interests' => [
-                'Full-Stack Web Development',
-                'Artificial Intelligence & ML',
-                'Data Science & Analytics',
-                'Mobile App Development',
-                'API Development',
-                'Database Design',
-                'Teaching & Mentoring',
-                'Research & Innovation',
-                'Natural Language Processing',
-                'Computer Vision'
-            ],
+    // ==========================================
+    // PRIVATE HELPER METHODS
+    // ==========================================
 
-            // Core Technical Competencies
-            'core_skills' => [
-                'Laravel & PHP Development',
-                'Vue.js & JavaScript',
-                'Python & AI/ML Libraries',
-                'Database Management (MySQL, PostgreSQL)',
-                'RESTful API Design',
-                'Git Version Control',
-                'Teaching & Knowledge Transfer',
-                'Project Management',
-                'Research Methodology',
-                'Problem Solving'
-            ],
-
-            // Language Proficiencies
-            'languages' => [
-                [
-                    'name' => 'Bahasa Indonesia',
-                    'level' => 'Native',
-                    'proficiency' => 100,
-                    'description' => 'Native speaker'
-                ],
-                [
-                    'name' => 'English',
-                    'level' => 'Intermediate',
-                    'proficiency' => 70,
-                    'description' => 'Technical documentation, academic papers'
-                ],
-                [
-                    'name' => 'Arabic',
-                    'level' => 'Basic',
-                    'proficiency' => 40,
-                    'description' => 'Religious studies, basic conversation'
-                ]
-            ],
-
-            // Professional Status & Availability
-            'availability' => [
-                'status' => 'Available for Opportunities',
-                'type' => 'Full-time, Part-time, Internship',
-                'start_date' => '2025-01-01',
-                'looking_for' => [
-                    'Software Developer Intern',
-                    'Full-Stack Developer',
-                    'Research Assistant',
-                    'Lecturer Assistant',
-                    'Junior Data Analyst'
-                ],
-                'preferred_roles' => [
-                    'Backend Developer (Laravel, PHP)',
-                    'Frontend Developer (Vue.js, React)',
-                    'Full-Stack Web Developer',
-                    'AI/ML Engineer Intern',
-                    'Research & Development'
-                ],
-                'work_preferences' => [
-                    'Remote Work',
-                    'Hybrid Work',
-                    'On-site (Pekanbaru, Riau)',
-                    'Flexible Schedule'
-                ]
-            ],
-
-            // Social Media & Professional Links
-            'social_links' => [
-                'github' => 'https://github.com/nurfznhanif',
-                'linkedin' => 'https://linkedin.com/in/nurfauzan-hanif',
-                'email' => 'nrfznhnf@gmail.com',
-                'whatsapp' => 'https://wa.me/6282285685679',
-                'telegram' => '@nurfznhanif',
-            ],
-
-            // Career Objectives & Goals
-            'objectives' => [
-                'short_term' => 'Complete undergraduate degree with honors and gain practical industry experience through internships or part-time work.',
-                'medium_term' => 'Develop expertise in AI/ML applications and contribute to meaningful projects in tech industry.',
-                'long_term' => 'Become a senior software engineer specializing in AI-driven applications and contribute to open-source community.',
-                'passion' => 'Building technology solutions that make a positive impact on society and mentoring the next generation of developers.'
-            ],
-
-            // Personal Qualities & Soft Skills
-            'qualities' => [
-                'Leadership' => 'Led programming study groups and managed organizational activities',
-                'Communication' => 'Experience teaching and presenting technical concepts to diverse audiences',
-                'Problem Solving' => 'Strong analytical thinking with research background',
-                'Teamwork' => 'Collaborative approach in academic and project environments',
-                'Adaptability' => 'Quick learner who stays current with technology trends',
-                'Time Management' => 'Successfully balancing studies, teaching, and personal projects'
-            ],
-
-            // Achievements & Recognition
-            'achievements' => [
-                [
-                    'title' => 'High Academic Performance',
-                    'description' => 'Maintaining GPA 3.76 while serving as Teaching Assistant',
-                    'date' => '2021-2025',
-                    'category' => 'Academic'
-                ],
-                [
-                    'title' => 'Lecturer Assistant Role',
-                    'description' => 'Selected as TA for multiple programming courses',
-                    'date' => '2023-Present',
-                    'category' => 'Professional'
-                ],
-                [
-                    'title' => 'Research Publication (In Progress)',
-                    'description' => 'Working on thesis research in NLP and sentiment analysis',
-                    'date' => '2024-2025',
-                    'category' => 'Research'
-                ]
-            ],
-
-            // Fun Facts & Personal Touch
-            'fun_facts' => [
-                '🎓 Teaching programming to fellow students since 2023',
-                '💻 Built multiple web applications using modern frameworks',
-                '📊 Passionate about data analysis and visualization',
-                '🤖 Currently researching AI applications in social media',
-                '📚 Enjoys reading about emerging technologies',
-                '🌱 Always learning new programming languages and frameworks'
-            ],
-
-            // Current Focus & Projects
-            'current_focus' => [
-                'Completing final year thesis research',
-                'Lecturer assistant responsibilities',
-                'Building portfolio projects',
-                'Learning advanced AI/ML techniques',
-                'Contributing to open-source projects',
-                'Preparing for industry transition'
-            ],
-
-            // Certifications & Courses (if any)
-            'certifications' => [
-                // Add any relevant certifications here
-                [
-                    'name' => 'Web Development Fundamentals',
-                    'issuer' => 'Self-Study & Practice',
-                    'date' => '2023',
-                    'skills' => ['HTML', 'CSS', 'JavaScript', 'PHP', 'Laravel']
-                ],
-                [
-                    'name' => 'Database Management',
-                    'issuer' => 'University Coursework',
-                    'date' => '2023',
-                    'skills' => ['MySQL', 'PostgreSQL', 'Database Design']
-                ]
-            ],
-
-            // Technical Stack Preferences
-            'tech_stack' => [
-                'backend' => ['Laravel', 'PHP', 'Node.js', 'Python'],
-                'frontend' => ['Vue.js', 'JavaScript', 'HTML5', 'CSS3', 'Tailwind CSS'],
-                'database' => ['MySQL', 'PostgreSQL', 'SQLite'],
-                'tools' => ['Git', 'VS Code', 'Postman', 'Docker (learning)'],
-                'deployment' => ['cPanel', 'Heroku', 'Vercel'],
-                'ai_ml' => ['Python', 'TensorFlow', 'Scikit-learn', 'Pandas', 'NumPy']
-            ],
-
-            // Contact Preferences
-            'contact_preferences' => [
-                'best_time' => 'Monday-Friday, 9AM-5PM WIB',
-                'response_time' => 'Within 24 hours',
-                'preferred_method' => 'Email or WhatsApp',
-                'languages' => 'Indonesian, English',
-                'timezone' => 'Asia/Jakarta (WIB, UTC+7)'
-            ]
-        ];
+    /**
+     * Get portfolios data with optimized queries
+     */
+    private function getPortfoliosData()
+    {
+        return Portfolio::select([
+            'id',
+            'title',
+            'description',
+            'technologies',
+            'challenges',
+            'solutions',
+            'github_url',
+            'project_type',
+            'project_date',
+            'created_at'
+        ])->orderBy('project_date', 'desc')->get();
     }
 
     /**
-     * Calculate comprehensive portfolio statistics
+     * Get experiences data
      */
-    private function calculatePortfolioStatistics($data)
+    private function getExperiencesData()
     {
-        $portfolios = $data['portfolios'];
-        $experiences = $data['experiences'];
-        $skills = $data['skills'];
+        return Experience::select([
+            'id',
+            'position',
+            'organization',
+            'description',
+            'start_date',
+            'end_date',
+            'is_current'
+        ])->orderBy('start_date', 'desc')->get();
+    }
+
+    /**
+     * Get skills data grouped by category
+     */
+    private function getSkillsData()
+    {
+        return Skill::select(['id', 'name', 'category', 'level'])
+            ->orderBy('category')
+            ->orderBy('name')
+            ->get()
+            ->groupBy('category');
+    }
+
+    /**
+     * Get dynamic profile data from settings
+     */
+    private function getDynamicProfileData()
+    {
+        $cacheKey = 'dynamic_profile_data';
+        return Cache::remember($cacheKey, 3600, function () {
+            $settings = ProfileSetting::where('is_public', true)->get();
+            $profile = [];
+
+            foreach ($settings as $setting) {
+                // Handle nested keys (e.g., 'education_gpa' -> ['education']['gpa'])
+                if (str_contains($setting->key, '_')) {
+                    $keys = explode('_', $setting->key, 2);
+                    if (count($keys) === 2) {
+                        $profile[$keys[0]][$keys[1]] = $setting->value;
+                    } else {
+                        $profile[$setting->key] = $setting->value;
+                    }
+                } else {
+                    $profile[$setting->key] = $setting->value;
+                }
+            }
+
+            // Add computed fields
+            $profile['portfolio_url'] = config('app.url');
+            $profile['generated_at'] = now()->toISOString();
+
+            return $profile;
+        });
+    }
+
+    /**
+     * Get social links data
+     */
+    private function getSocialLinksData()
+    {
+        $cacheKey = 'social_links_data';
+        return Cache::remember($cacheKey, 3600, function () {
+            return SocialLink::active()->ordered()->get();
+        });
+    }
+
+    /**
+     * Get achievements data
+     */
+    private function getAchievementsData()
+    {
+        $cacheKey = 'achievements_data';
+        return Cache::remember($cacheKey, 3600, function () {
+            return Achievement::active()->ordered()->get();
+        });
+    }
+
+    /**
+     * Get languages data
+     */
+    private function getLanguagesData()
+    {
+        $cacheKey = 'languages_data';
+        return Cache::remember($cacheKey, 3600, function () {
+            return Language::active()->ordered()->get();
+        });
+    }
+
+    /**
+     * Get interests data
+     */
+    private function getInterestsData()
+    {
+        $cacheKey = 'interests_data';
+        return Cache::remember($cacheKey, 3600, function () {
+            return Interest::active()->ordered()->get();
+        });
+    }
+
+    /**
+     * Get certifications data
+     */
+    private function getCertificationsData()
+    {
+        $cacheKey = 'certifications_data';
+        return Cache::remember($cacheKey, 3600, function () {
+            return Certification::active()->ordered()->get();
+        });
+    }
+
+    /**
+     * Calculate dynamic statistics
+     */
+    private function calculateDynamicStatistics($portfolioData)
+    {
+        $portfolios = $portfolioData['portfolios'];
+        $experiences = $portfolioData['experiences'];
+        $skills = $portfolioData['skills'];
 
         // Calculate years of experience
         $firstExperience = $experiences->sortBy('start_date')->first();
         $yearsOfExperience = $firstExperience
-            ? now()->diffInYears($firstExperience->start_date)
-            : 0;
+            ? max(1, now()->diffInYears($firstExperience->start_date))
+            : 1;
 
-        // Project statistics
-        $projectTypes = $portfolios->groupBy('project_type');
+        // Technology analysis
         $technologies = [];
-        $recentProjects = $portfolios->where('project_date', '>=', now()->subMonths(6));
-
-        // Technology usage analysis
         foreach ($portfolios as $portfolio) {
-            $techs = array_map('trim', explode(',', $portfolio->technologies ?? ''));
-            foreach ($techs as $tech) {
-                if (!empty($tech)) {
-                    $technologies[$tech] = ($technologies[$tech] ?? 0) + 1;
+            if ($portfolio->technologies) {
+                $techs = array_map('trim', explode(',', $portfolio->technologies));
+                foreach ($techs as $tech) {
+                    if (!empty($tech)) {
+                        $technologies[$tech] = ($technologies[$tech] ?? 0) + 1;
+                    }
                 }
             }
         }
 
-        // Sort technologies by usage
         arsort($technologies);
         $topTechnologies = array_slice($technologies, 0, 10, true);
 
@@ -651,42 +723,42 @@ class PortfolioPublicController extends Controller
             $advancedSkills += $categoryStats['advanced'];
         }
 
-        // Experience analysis
+        // Recent activity
+        $recentProjects = $portfolios->where('project_date', '>=', now()->subMonths(6));
         $currentPositions = $experiences->where('is_current', true);
-        $totalExperience = $experiences->count();
 
         return [
             'overview' => [
                 'total_projects' => $portfolios->count(),
-                'years_experience' => max(1, $yearsOfExperience),
+                'years_experience' => $yearsOfExperience,
                 'total_skills' => $totalSkills,
                 'skill_categories' => $skills->count(),
                 'current_positions' => $currentPositions->count(),
                 'advanced_skills' => $advancedSkills,
-                'skill_proficiency' => $totalSkills > 0 ? round(($advancedSkills / $totalSkills) * 100) : 0
+                'skill_proficiency' => $totalSkills > 0 ? round(($advancedSkills / $totalSkills) * 100) : 0,
+                'recent_projects' => $recentProjects->count()
             ],
 
             'projects' => [
-                'by_type' => $projectTypes->map->count()->toArray(),
+                'by_type' => $portfolios->groupBy('project_type')->map->count()->toArray(),
                 'recent_count' => $recentProjects->count(),
                 'latest' => $portfolios->first(),
                 'featured' => $portfolios->take(6),
-                'completion_rate' => 100 // Assuming all listed projects are completed
+                'completion_rate' => 100
             ],
 
             'technologies' => [
                 'all' => $technologies,
                 'top_10' => $topTechnologies,
-                'most_used' => array_key_first($topTechnologies),
+                'most_used' => count($topTechnologies) > 0 ? array_key_first($topTechnologies) : null,
                 'diversity_score' => count($technologies),
-                'usage_distribution' => $this->calculateTechDistribution($technologies)
+                'modern_score' => $this->calculateModernTechScore($technologies)
             ],
 
             'experience' => [
-                'total_positions' => $totalExperience,
+                'total_positions' => $experiences->count(),
                 'current_roles' => $currentPositions->pluck('position')->toArray(),
                 'organizations' => $experiences->pluck('organization')->unique()->count(),
-                'career_progression' => $this->analyzeCareerProgression($experiences),
                 'latest_position' => $experiences->first()
             ],
 
@@ -696,187 +768,174 @@ class PortfolioPublicController extends Controller
                     'advanced' => $advancedSkills,
                     'intermediate' => array_sum(array_column($skillStats, 'intermediate')),
                     'beginner' => array_sum(array_column($skillStats, 'beginner')),
-                ],
-                'growth_areas' => $this->identifyGrowthAreas($skillStats)
+                ]
             ],
 
             'performance_metrics' => [
                 'portfolio_completeness' => $this->calculatePortfolioCompleteness($portfolios),
                 'project_complexity' => $this->assessProjectComplexity($portfolios),
-                'technology_modernness' => $this->assessTechnologyModernness($technologies),
                 'career_momentum' => $this->calculateCareerMomentum($experiences)
             ],
 
             'generated_at' => now()->toISOString(),
-            'cache_duration' => 3600 // 1 hour
+            'cache_duration' => ProfileSetting::getValue('cache_duration', 3600)
         ];
     }
 
     /**
-     * Generate comprehensive meta data for SEO and social sharing
+     * Generate dynamic meta data
      */
-    private function generateMetaData($profile, $statistics)
+    private function generateDynamicMetaData($profile, $statistics)
     {
-        $skillCount = $statistics['overview']['total_skills'];
-        $projectCount = $statistics['overview']['total_projects'];
-        $gpa = $profile['education']['gpa'];
+        $name = $profile['name'] ?? 'Portfolio';
+        $title = $profile['title'] ?? 'Developer';
+        $summary = $profile['summary'] ?? 'Portfolio website';
+        $photo = $profile['photo'] ?? '/images/default-avatar.png';
+
+        $skillCount = $statistics['overview']['total_skills'] ?? 0;
+        $projectCount = $statistics['overview']['total_projects'] ?? 0;
+        $gpa = $profile['education']['gpa'] ?? '';
+
+        $description = "Passionate {$title} with {$projectCount}+ projects and {$skillCount}+ skills" .
+            ($gpa ? ", GPA {$gpa}" : '') .
+            ". Specializing in full-stack development, AI/ML, and data analysis.";
 
         return [
-            'title' => "{$profile['name']} - {$profile['title']} | Portfolio",
-            'description' => "Passionate Computer Science student with {$projectCount}+ projects, {$skillCount}+ skills, and {$gpa} GPA. Specializing in full-stack development, AI/ML, and data analysis. Currently seeking opportunities in software development.",
-            'keywords' => implode(', ', array_merge(
-                $profile['core_skills'],
-                array_slice($profile['interests'], 0, 5),
-                ['Computer Science Student', 'Teaching Assistant', 'Pekanbaru', 'Indonesia']
-            )),
-            'author' => $profile['name'],
+            'title' => ProfileSetting::getValue('site_title', "{$name} - {$title} | Portfolio"),
+            'description' => ProfileSetting::getValue('site_description', $description),
+            'keywords' => ProfileSetting::getValue('site_keywords', "{$name}, {$title}, Developer, Portfolio"),
+            'author' => $name,
             'type' => 'portfolio',
             'url' => config('app.url'),
-            'image' => asset($profile['photo']),
-            'image_alt' => "{$profile['name']} - Computer Science Student",
+            'image' => asset($photo),
+            'image_alt' => "{$name} - {$title}",
             'locale' => 'id_ID',
-            'site_name' => "{$profile['name']} Portfolio",
+            'site_name' => "{$name} Portfolio",
             'twitter_card' => 'summary_large_image',
             'og_type' => 'profile',
             'canonical_url' => config('app.url'),
 
-            // Structured data for search engines
             'structured_data' => [
                 '@context' => 'https://schema.org',
                 '@type' => 'Person',
-                'name' => $profile['name'],
-                'jobTitle' => $profile['title'],
-                'description' => $profile['summary'],
+                'name' => $name,
+                'jobTitle' => $title,
+                'description' => $summary,
                 'url' => config('app.url'),
-                'image' => asset($profile['photo']),
-                'email' => $profile['email'],
-                'telephone' => $profile['phone'],
+                'image' => asset($photo),
+                'email' => $profile['email'] ?? '',
+                'telephone' => $profile['phone'] ?? '',
                 'address' => [
                     '@type' => 'PostalAddress',
                     'addressLocality' => 'Pekanbaru',
                     'addressRegion' => 'Riau',
                     'addressCountry' => 'Indonesia'
-                ],
-                'alumniOf' => [
-                    '@type' => 'EducationalOrganization',
-                    'name' => $profile['education']['university']
-                ],
-                'knows' => $profile['core_skills'],
-                'sameAs' => array_values($profile['social_links'])
+                ]
             ]
         ];
     }
 
     /**
-     * Fallback method when cache fails
+     * Get configuration settings
      */
-    private function fallbackPortfolioData()
+    private function getConfigurationSettings()
     {
-        $basicProfile = [
-            'name' => 'Nurfauzan Hanif',
-            'title' => 'Computer Science Student',
-            'email' => 'nrfznhnf@gmail.com',
-            'education' => ['gpa' => '3.76']
+        return [
+            'app_name' => config('app.name'),
+            'app_url' => config('app.url'),
+            'contact_email' => ProfileSetting::getValue('email', 'contact@example.com'),
+            'enable_contact_form' => ProfileSetting::getValue('enable_contact_form', true),
+            'enable_animations' => ProfileSetting::getValue('enable_animations', true),
+            'enable_analytics' => ProfileSetting::getValue('enable_analytics', true),
+            'theme' => ProfileSetting::getValue('theme', 'modern'),
+            'items_per_page' => (int) ProfileSetting::getValue('items_per_page', 6),
+            'cache_duration' => (int) ProfileSetting::getValue('cache_duration', 3600)
         ];
+    }
 
-        return Inertia::render('Portfolio/Index', [
-            'portfolios' => [],
-            'experiences' => [],
-            'skills' => [],
-            'profile' => $basicProfile,
-            'statistics' => ['overview' => ['total_projects' => 0]],
-            'meta' => ['title' => 'Portfolio - Nurfauzan Hanif'],
-            'error' => 'Some data may be temporarily unavailable.'
+    /**
+     * Track analytics events
+     */
+    private function trackEvent(string $eventType, ?string $page = null, ?array $data = null, ?string $ipAddress = null)
+    {
+        if (!ProfileSetting::getValue('enable_analytics', true)) {
+            return false;
+        }
+
+        try {
+            PortfolioAnalytic::track($eventType, $page, $data, $ipAddress);
+            return true;
+        } catch (\Exception $e) {
+            Log::warning('Failed to track event: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Detect spam in contact form
+     */
+    private function detectSpam(array $data): bool
+    {
+        $spamKeywords = ['viagra', 'casino', 'loan', 'bitcoin', 'crypto', 'investment', 'make money'];
+        $message = strtolower($data['message']);
+        $name = strtolower($data['name']);
+        $email = strtolower($data['email']);
+
+        // Check for spam keywords
+        foreach ($spamKeywords as $keyword) {
+            if (str_contains($message, $keyword) || str_contains($name, $keyword)) {
+                return true;
+            }
+        }
+
+        // Check for suspicious patterns
+        if (preg_match('/https?:\/\//', $message) && substr_count($message, 'http') > 2) {
+            return true; // Too many links
+        }
+
+        if (strlen($message) > 1500 && str_word_count($message) < 50) {
+            return true; // Too many characters with few words
+        }
+
+        if (preg_match('/(.)\1{4,}/', $message)) {
+            return true; // Repeated characters
+        }
+
+        return false;
+    }
+
+    /**
+     * Send contact notification (implement as needed)
+     */
+    private function sendContactNotification(ContactMessage $message)
+    {
+        // Implement email notification to admin
+        // Could use Laravel Mail, third-party services, etc.
+
+        Log::info('Contact notification would be sent', [
+            'message_id' => $message->id,
+            'from' => $message->email,
+            'name' => $message->name
         ]);
     }
 
     /**
-     * Helper methods for statistics calculation
+     * Send auto-reply to user
      */
-    private function calculateTechDistribution($technologies)
+    private function sendAutoReply(ContactMessage $message)
     {
-        $total = array_sum($technologies);
-        $distribution = [];
+        // Implement auto-reply email to user
 
-        foreach ($technologies as $tech => $count) {
-            $distribution[$tech] = $total > 0 ? round(($count / $total) * 100, 2) : 0;
-        }
-
-        return $distribution;
+        Log::info('Auto-reply would be sent', [
+            'message_id' => $message->id,
+            'to' => $message->email
+        ]);
     }
 
-    private function analyzeCareerProgression($experiences)
-    {
-        $progression = [];
-        $sortedExperiences = $experiences->sortBy('start_date');
-
-        foreach ($sortedExperiences as $index => $experience) {
-            $progression[] = [
-                'position' => $experience->position,
-                'organization' => $experience->organization,
-                'start_date' => $experience->start_date,
-                'is_current' => $experience->is_current,
-                'order' => $index + 1
-            ];
-        }
-
-        return $progression;
-    }
-
-    private function identifyGrowthAreas($skillStats)
-    {
-        $growthAreas = [];
-
-        foreach ($skillStats as $category => $stats) {
-            $beginnerRatio = $stats['total'] > 0 ? ($stats['beginner'] / $stats['total']) * 100 : 0;
-
-            if ($beginnerRatio > 50) {
-                $growthAreas[] = [
-                    'category' => $category,
-                    'priority' => 'high',
-                    'reason' => 'High beginner skill ratio'
-                ];
-            }
-        }
-
-        return $growthAreas;
-    }
-
-    private function calculatePortfolioCompleteness($portfolios)
-    {
-        $completenessFactors = 0;
-        $totalFactors = 6;
-
-        if ($portfolios->count() > 0) $completenessFactors++;
-        if ($portfolios->where('github_url', '!=', null)->count() > 0) $completenessFactors++;
-        if ($portfolios->where('challenges', '!=', null)->count() > 0) $completenessFactors++;
-        if ($portfolios->where('solutions', '!=', null)->count() > 0) $completenessFactors++;
-        if ($portfolios->count() >= 5) $completenessFactors++;
-        if ($portfolios->where('project_date', '>=', now()->subYear())->count() > 0) $completenessFactors++;
-
-        return round(($completenessFactors / $totalFactors) * 100);
-    }
-
-    private function assessProjectComplexity($portfolios)
-    {
-        $complexityScore = 0;
-
-        foreach ($portfolios as $portfolio) {
-            $techCount = count(explode(',', $portfolio->technologies ?? ''));
-            $hasGithub = !empty($portfolio->github_url);
-            $hasChallenges = !empty($portfolio->challenges);
-            $hasSolutions = !empty($portfolio->solutions);
-
-            $projectScore = ($techCount * 10) + ($hasGithub ? 20 : 0) +
-                ($hasChallenges ? 15 : 0) + ($hasSolutions ? 15 : 0);
-
-            $complexityScore += min($projectScore, 100);
-        }
-
-        return $portfolios->count() > 0 ? round($complexityScore / $portfolios->count()) : 0;
-    }
-
-    private function assessTechnologyModernness($technologies)
+    /**
+     * Calculate modern technology score
+     */
+    private function calculateModernTechScore(array $technologies): int
     {
         $modernTechs = [
             'Laravel',
@@ -893,54 +952,127 @@ class PortfolioPublicController extends Controller
             'TensorFlow',
             'PyTorch',
             'Next.js',
-            'Tailwind CSS'
+            'Tailwind CSS',
+            'GraphQL'
         ];
 
         $modernTechCount = 0;
+        $totalUsage = array_sum($technologies);
+
         foreach ($technologies as $tech => $count) {
             if (in_array($tech, $modernTechs)) {
                 $modernTechCount += $count;
             }
         }
 
-        $totalTechUsage = array_sum($technologies);
-        return $totalTechUsage > 0 ? round(($modernTechCount / $totalTechUsage) * 100) : 0;
+        return $totalUsage > 0 ? round(($modernTechCount / $totalUsage) * 100) : 0;
     }
 
-    private function calculateCareerMomentum($experiences)
+    /**
+     * Calculate portfolio completeness
+     */
+    private function calculatePortfolioCompleteness($portfolios): int
+    {
+        if ($portfolios->isEmpty()) return 0;
+
+        $completenessFactors = 0;
+        $totalFactors = 6;
+
+        if ($portfolios->count() >= 3) $completenessFactors++;
+        if ($portfolios->where('github_url', '!=', null)->count() > 0) $completenessFactors++;
+        if ($portfolios->where('challenges', '!=', null)->count() > 0) $completenessFactors++;
+        if ($portfolios->where('solutions', '!=', null)->count() > 0) $completenessFactors++;
+        if ($portfolios->count() >= 5) $completenessFactors++;
+        if ($portfolios->where('project_date', '>=', now()->subYear())->count() > 0) $completenessFactors++;
+
+        return round(($completenessFactors / $totalFactors) * 100);
+    }
+
+    /**
+     * Assess project complexity
+     */
+    private function assessProjectComplexity($portfolios): int
+    {
+        if ($portfolios->isEmpty()) return 0;
+
+        $totalComplexity = 0;
+
+        foreach ($portfolios as $portfolio) {
+            $complexity = 0;
+
+            // Technology count (max 40 points)
+            $techCount = count(array_filter(explode(',', $portfolio->technologies ?? '')));
+            $complexity += min($techCount * 5, 40);
+
+            // Additional factors
+            if ($portfolio->github_url) $complexity += 20;
+            if ($portfolio->challenges) $complexity += 20;
+            if ($portfolio->solutions) $complexity += 20;
+
+            $totalComplexity += min($complexity, 100);
+        }
+
+        return round($totalComplexity / $portfolios->count());
+    }
+
+    /**
+     * Calculate career momentum
+     */
+    private function calculateCareerMomentum($experiences): int
     {
         $momentum = 0;
+
         $currentPositions = $experiences->where('is_current', true)->count();
         $recentExperiences = $experiences->where('start_date', '>=', now()->subYear())->count();
+        $totalExperiences = $experiences->count();
 
         $momentum += ($currentPositions * 30);
-        $momentum += ($recentExperiences * 20);
-        $momentum += ($experiences->count() * 10);
+        $momentum += ($recentExperiences * 25);
+        $momentum += ($totalExperiences * 15);
 
         return min($momentum, 100);
     }
 
     /**
-     * Simulate email sending (replace with actual email service)
+     * Format bytes to human readable
      */
-    private function simulateEmailSending($data, $request)
+    private function formatBytes($size, $precision = 2): string
     {
-        // This is where you would integrate with actual email services
-        // Examples:
-        // - Laravel Mail with SMTP
-        // - SendGrid API
-        // - Mailgun API
-        // - Amazon SES
+        $units = ['B', 'KB', 'MB', 'GB'];
 
-        Log::info('Email simulation - Contact form', [
-            'to' => 'nrfznhnf@gmail.com',
-            'subject' => $data['subject'] ?? 'Portfolio Contact',
-            'from' => $data['email'],
-            'sender_name' => $data['name'],
-            'message_preview' => substr($data['message'], 0, 100) . '...',
-            'timestamp' => now()
+        for ($i = 0; $size > 1024 && $i < count($units) - 1; $i++) {
+            $size /= 1024;
+        }
+
+        return round($size, $precision) . ' ' . $units[$i];
+    }
+
+    /**
+     * Fallback method when main system fails
+     */
+    private function fallbackPortfolioData()
+    {
+        $basicProfile = [
+            'name' => ProfileSetting::getValue('name', 'Portfolio Owner'),
+            'title' => ProfileSetting::getValue('title', 'Developer'),
+            'email' => ProfileSetting::getValue('email', 'contact@example.com'),
+            'education' => ['gpa' => ProfileSetting::getValue('education_gpa', '0.00')]
+        ];
+
+        return Inertia::render('Portfolio/Index', [
+            'portfolios' => collect([]),
+            'experiences' => collect([]),
+            'skills' => collect([]),
+            'profile' => $basicProfile,
+            'statistics' => ['overview' => ['total_projects' => 0]],
+            'meta' => ['title' => 'Portfolio'],
+            'config' => $this->getConfigurationSettings(),
+            'socialLinks' => collect([]),
+            'achievements' => collect([]),
+            'languages' => collect([]),
+            'interests' => collect([]),
+            'certifications' => collect([]),
+            'error' => 'Some data may be temporarily unavailable. Please try again later.'
         ]);
-
-        return true;
     }
 }

@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AdminSeeder::class,
+            ProfileDynamicSeeder::class, // Add the new dynamic seeder
         ]);
 
         // Portfolio Projects - Based on PDF Document
@@ -49,6 +50,16 @@ class DatabaseSeeder extends Seeder
                 'github_url' => 'https://github.com/nurfznhanif/',
                 'project_type' => 'Integrated System',
                 'project_date' => '2024-02-20'
+            ],
+            [
+                'title' => 'Portfolio Website with Admin Dashboard',
+                'description' => 'Developed a comprehensive portfolio website with dynamic content management system using Laravel and Vue.js. Features include portfolio project management, experience tracking, skills assessment, contact form with analytics, and real-time content updates. Implemented modern design with glassmorphism effects and responsive layout.',
+                'technologies' => 'Laravel, Vue.js, Inertia.js, Tailwind CSS, MySQL, PHP',
+                'challenges' => 'Creating a seamless single-page application experience while maintaining SEO optimization and fast loading times. Balancing modern design aesthetics with accessibility and performance requirements.',
+                'solutions' => 'Utilized Inertia.js for smooth SPA experience with server-side rendering benefits. Implemented efficient caching strategies, image optimization, and progressive loading techniques. Used semantic HTML and ARIA labels for accessibility.',
+                'github_url' => 'https://github.com/nurfznhanif/portfolio-dynamic',
+                'project_type' => 'Web Application',
+                'project_date' => '2024-12-01'
             ]
         ];
 
@@ -96,74 +107,121 @@ class DatabaseSeeder extends Seeder
             Experience::create($experience);
         }
 
-        // Skills - Based on CV Document with Enhanced Categories
+        // Enhanced Skills - Based on CV Document with Additional Categories
         $skills = [
             // Web Programming
-            ['name' => 'PHP', 'category' => 'Web Programming', 'level' => 'menengah'],
-            ['name' => 'JavaScript', 'category' => 'Web Programming', 'level' => 'menengah'],
-            ['name' => 'Laravel', 'category' => 'Web Programming', 'level' => 'menengah'],
+            ['name' => 'PHP', 'category' => 'Web Programming', 'level' => 'mahir'],
+            ['name' => 'JavaScript', 'category' => 'Web Programming', 'level' => 'mahir'],
+            ['name' => 'Laravel', 'category' => 'Web Programming', 'level' => 'mahir'],
             ['name' => 'Vue.js', 'category' => 'Web Programming', 'level' => 'menengah'],
             ['name' => 'React.js', 'category' => 'Web Programming', 'level' => 'menengah'],
             ['name' => 'CodeIgniter', 'category' => 'Web Programming', 'level' => 'menengah'],
-            ['name' => 'HTML/CSS', 'category' => 'Web Programming', 'level' => 'menengah'],
-            ['name' => 'REST API Development', 'category' => 'Web Programming', 'level' => 'menengah'],
+            ['name' => 'HTML/CSS', 'category' => 'Web Programming', 'level' => 'mahir'],
+            ['name' => 'REST API Development', 'category' => 'Web Programming', 'level' => 'mahir'],
+            ['name' => 'Inertia.js', 'category' => 'Web Programming', 'level' => 'menengah'],
+            ['name' => 'Tailwind CSS', 'category' => 'Web Programming', 'level' => 'menengah'],
 
             // Data Analysis & AI
-            ['name' => 'Python', 'category' => 'Data Analysis', 'level' => 'menengah'],
+            ['name' => 'Python', 'category' => 'Data Analysis', 'level' => 'mahir'],
             ['name' => 'Google Colab', 'category' => 'Data Analysis', 'level' => 'menengah'],
             ['name' => 'Data Visualization', 'category' => 'Data Analysis', 'level' => 'menengah'],
             ['name' => 'Machine Learning', 'category' => 'Data Analysis', 'level' => 'menengah'],
             ['name' => 'BERT (Transformers)', 'category' => 'Data Analysis', 'level' => 'menengah'],
-            ['name' => 'Sentiment Analysis', 'category' => 'Data Analysis', 'level' => 'menengah'],
+            ['name' => 'Sentiment Analysis', 'category' => 'Data Analysis', 'level' => 'mahir'],
             ['name' => 'Latent Dirichlet Allocation', 'category' => 'Data Analysis', 'level' => 'menengah'],
+            ['name' => 'Pandas', 'category' => 'Data Analysis', 'level' => 'menengah'],
+            ['name' => 'NumPy', 'category' => 'Data Analysis', 'level' => 'menengah'],
+            ['name' => 'Scikit-learn', 'category' => 'Data Analysis', 'level' => 'menengah'],
 
             // Mobile Programming
             ['name' => 'React Native', 'category' => 'Mobile Programming', 'level' => 'menengah'],
             ['name' => 'Cross-platform Development', 'category' => 'Mobile Programming', 'level' => 'menengah'],
-            ['name' => 'Native Mobile Development', 'category' => 'Mobile Programming', 'level' => 'menengah'],
+            ['name' => 'Native Mobile Development', 'category' => 'Mobile Programming', 'level' => 'pemula'],
+            ['name' => 'Mobile UI/UX', 'category' => 'Mobile Programming', 'level' => 'menengah'],
 
             // Database
-            ['name' => 'MySQL', 'category' => 'Database', 'level' => 'menengah'],
-            ['name' => 'Database Design', 'category' => 'Database', 'level' => 'menengah'],
+            ['name' => 'MySQL', 'category' => 'Database', 'level' => 'mahir'],
+            ['name' => 'Database Design', 'category' => 'Database', 'level' => 'mahir'],
             ['name' => 'Graph Database', 'category' => 'Database', 'level' => 'menengah'],
-            ['name' => 'Data Structures', 'category' => 'Database', 'level' => 'menengah'],
+            ['name' => 'Data Structures', 'category' => 'Database', 'level' => 'mahir'],
+            ['name' => 'PostgreSQL', 'category' => 'Database', 'level' => 'menengah'],
+            ['name' => 'SQLite', 'category' => 'Database', 'level' => 'menengah'],
+            ['name' => 'Database Optimization', 'category' => 'Database', 'level' => 'menengah'],
 
             // Office Suite
             ['name' => 'Microsoft Word', 'category' => 'Office Suite', 'level' => 'mahir'],
             ['name' => 'Microsoft Excel', 'category' => 'Office Suite', 'level' => 'menengah'],
-            ['name' => 'Microsoft PowerPoint', 'category' => 'Office Suite', 'level' => 'pemula'],
+            ['name' => 'Microsoft PowerPoint', 'category' => 'Office Suite', 'level' => 'menengah'],
+            ['name' => 'Google Workspace', 'category' => 'Office Suite', 'level' => 'menengah'],
 
             // Programming Concepts
-            ['name' => 'Algorithm Design', 'category' => 'Programming Concepts', 'level' => 'menengah'],
-            ['name' => 'Data Structures', 'category' => 'Programming Concepts', 'level' => 'menengah'],
-            ['name' => 'Object-Oriented Programming', 'category' => 'Programming Concepts', 'level' => 'menengah'],
+            ['name' => 'Algorithm Design', 'category' => 'Programming Concepts', 'level' => 'mahir'],
+            ['name' => 'Data Structures', 'category' => 'Programming Concepts', 'level' => 'mahir'],
+            ['name' => 'Object-Oriented Programming', 'category' => 'Programming Concepts', 'level' => 'mahir'],
             ['name' => 'Component-Based Programming', 'category' => 'Programming Concepts', 'level' => 'menengah'],
+            ['name' => 'Design Patterns', 'category' => 'Programming Concepts', 'level' => 'menengah'],
+            ['name' => 'Clean Code', 'category' => 'Programming Concepts', 'level' => 'menengah'],
 
             // Artificial Intelligence
             ['name' => 'Artificial Intelligence', 'category' => 'Artificial Intelligence', 'level' => 'menengah'],
             ['name' => 'Fuzzy Logic', 'category' => 'Artificial Intelligence', 'level' => 'menengah'],
             ['name' => 'Neural Networks', 'category' => 'Artificial Intelligence', 'level' => 'menengah'],
+            ['name' => 'Natural Language Processing', 'category' => 'Artificial Intelligence', 'level' => 'mahir'],
+            ['name' => 'Computer Vision', 'category' => 'Artificial Intelligence', 'level' => 'pemula'],
 
             // Soft Skills
             ['name' => 'Leadership', 'category' => 'Soft Skills', 'level' => 'mahir'],
             ['name' => 'Team Collaboration', 'category' => 'Soft Skills', 'level' => 'mahir'],
             ['name' => 'Communication', 'category' => 'Soft Skills', 'level' => 'mahir'],
             ['name' => 'Project Management', 'category' => 'Soft Skills', 'level' => 'menengah'],
-            ['name' => 'Problem Solving', 'category' => 'Soft Skills', 'level' => 'menengah'],
+            ['name' => 'Problem Solving', 'category' => 'Soft Skills', 'level' => 'mahir'],
+            ['name' => 'Teaching & Mentoring', 'category' => 'Soft Skills', 'level' => 'mahir'],
+            ['name' => 'Public Speaking', 'category' => 'Soft Skills', 'level' => 'menengah'],
 
             // Languages
             ['name' => 'Bahasa Indonesia', 'category' => 'Language', 'level' => 'mahir'],
-            ['name' => 'English', 'category' => 'Language', 'level' => 'pemula'],
+            ['name' => 'English', 'category' => 'Language', 'level' => 'menengah'],
+            ['name' => 'Arabic', 'category' => 'Language', 'level' => 'pemula'],
 
             // Specialized Technologies
             ['name' => 'Geofencing', 'category' => 'Specialized Technologies', 'level' => 'menengah'],
             ['name' => 'Location Services', 'category' => 'Specialized Technologies', 'level' => 'menengah'],
-            ['name' => 'Authentication Systems', 'category' => 'Specialized Technologies', 'level' => 'menengah'],
-            ['name' => 'CRUD Operations', 'category' => 'Specialized Technologies', 'level' => 'menengah']
+            ['name' => 'Authentication Systems', 'category' => 'Specialized Technologies', 'level' => 'mahir'],
+            ['name' => 'CRUD Operations', 'category' => 'Specialized Technologies', 'level' => 'mahir'],
+            ['name' => 'Version Control (Git)', 'category' => 'Specialized Technologies', 'level' => 'mahir'],
+            ['name' => 'RESTful APIs', 'category' => 'Specialized Technologies', 'level' => 'mahir'],
+            ['name' => 'JSON/XML Processing', 'category' => 'Specialized Technologies', 'level' => 'mahir'],
+
+            // Development Tools
+            ['name' => 'VS Code', 'category' => 'Development Tools', 'level' => 'mahir'],
+            ['name' => 'Git', 'category' => 'Development Tools', 'level' => 'mahir'],
+            ['name' => 'Postman', 'category' => 'Development Tools', 'level' => 'menengah'],
+            ['name' => 'Docker', 'category' => 'Development Tools', 'level' => 'pemula'],
+            ['name' => 'Composer', 'category' => 'Development Tools', 'level' => 'menengah'],
+            ['name' => 'NPM/Yarn', 'category' => 'Development Tools', 'level' => 'menengah'],
+
+            // Deployment & Hosting
+            ['name' => 'cPanel', 'category' => 'Deployment & Hosting', 'level' => 'menengah'],
+            ['name' => 'Heroku', 'category' => 'Deployment & Hosting', 'level' => 'menengah'],
+            ['name' => 'Vercel', 'category' => 'Deployment & Hosting', 'level' => 'menengah'],
+            ['name' => 'Linux Server', 'category' => 'Deployment & Hosting', 'level' => 'pemula'],
+            ['name' => 'Apache/Nginx', 'category' => 'Deployment & Hosting', 'level' => 'pemula']
         ];
 
         foreach ($skills as $skill) {
             Skill::create($skill);
         }
+
+        $this->command->info('Database seeded successfully with dynamic portfolio data!');
+        $this->command->info('Created:');
+        $this->command->info('- ' . count($portfolios) . ' portfolio projects');
+        $this->command->info('- ' . count($experiences) . ' work experiences');
+        $this->command->info('- ' . count($skills) . ' skills across ' . count(array_unique(array_column($skills, 'category'))) . ' categories');
+        $this->command->info('- Dynamic profile settings');
+        $this->command->info('- Social links');
+        $this->command->info('- Achievements');
+        $this->command->info('- Languages');
+        $this->command->info('- Interests');
+        $this->command->info('- Certifications');
     }
 }
