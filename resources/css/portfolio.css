@@ -1,0 +1,78 @@
+/* Portfolio Specific Styles */
+.dark-gothic {
+    background: linear-gradient(135deg, #0c0c0c 0%, #1a0000 50%, #0c0c0c 100%);
+    background-attachment: fixed;
+}
+
+.glossy-effect {
+    backdrop-filter: blur(10px);
+    background: rgba(0, 0, 0, 0.7);
+    border-bottom: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.gothic-card {
+    background: linear-gradient(145deg, #1f1f1f, #0a0a0a);
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+}
+
+.blood-red-gradient {
+    background: linear-gradient(135deg, #dc2626, #7f1d1d);
+    box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 1s ease-out;
+}
+
+.animate-shadow-pulse {
+    animation: shadowPulse 2s ease-in-out infinite;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shadowPulse {
+    0%,
+    100% {
+        box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
+    }
+    50% {
+        box-shadow: 0 8px 30px rgba(220, 38, 38, 0.6);
+    }
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Typography */
+.font-serif {
+    font-family: "Georgia", "Times New Roman", serif;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .animate-fade-in-up {
+        animation-delay: 0.3s;
+    }
+}
+
+/* Dark theme overrides */
+.dark .bg-gray-800 {
+    background-color: #1f2937 !important;
+}
+
+.dark .bg-gray-900 {
+    background-color: #111827 !important;
+}
