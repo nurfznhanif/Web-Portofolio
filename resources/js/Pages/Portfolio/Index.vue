@@ -1,229 +1,186 @@
 <template>
-  <div class="min-h-screen dark-gothic">
-    <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 glossy-effect">
-      <div class="container mx-auto px-6 py-4">
-        <div class="flex justify-between items-center">
-          <h1 class="text-2xl font-bold text-white font-serif">
-            {{ profile.name }}
-          </h1>
-          <div class="hidden md:flex space-x-8">
-            <a
-              href="#home"
-              class="text-gray-300 hover:text-red-400 transition-colors"
-              >Home</a
+  <div class="min-h-screen modern-bg overflow-x-hidden">
+    <!-- Modern Navigation -->
+    <nav class="fixed top-0 w-full z-50 glassmorphism border-b border-white/10">
+      <div class="container mx-auto px-4 lg:px-6">
+        <div class="flex justify-between items-center h-16">
+          <!-- Logo -->
+          <div class="flex items-center space-x-2">
+            <div
+              class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center"
             >
-            <a
-              href="#about"
-              class="text-gray-300 hover:text-red-400 transition-colors"
-              >About</a
-            >
-            <a
-              href="#portfolio"
-              class="text-gray-300 hover:text-red-400 transition-colors"
-              >Portfolio</a
-            >
-            <a
-              href="#experience"
-              class="text-gray-300 hover:text-red-400 transition-colors"
-              >Experience</a
-            >
-            <a
-              href="#skills"
-              class="text-gray-300 hover:text-red-400 transition-colors"
-              >Skills</a
-            >
-            <a
-              href="#contact"
-              class="text-gray-300 hover:text-red-400 transition-colors"
-              >Contact</a
-            >
+              <span class="text-white font-bold text-sm">NH</span>
+            </div>
+            <span class="text-white font-semibold hidden sm:block">{{
+              profile.name
+            }}</span>
           </div>
+
+          <!-- Desktop Menu -->
+          <div class="hidden md:flex items-center space-x-8">
+            <a
+              v-for="item in navItems"
+              :key="item.id"
+              :href="item.href"
+              class="text-gray-300 hover:text-white transition-all duration-300 text-sm font-medium hover:scale-105"
+              @click="handleNavClick"
+            >
+              {{ item.label }}
+            </a>
+          </div>
+
           <!-- Mobile Menu Button -->
           <button
             @click="toggleMobileMenu"
-            class="md:hidden text-white hover:text-red-400 transition-colors"
+            class="md:hidden p-2 rounded-lg bg-white/10 backdrop-blur-sm"
           >
-            <svg
-              class="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              ></path>
-            </svg>
+            <div class="w-5 h-5 flex flex-col justify-center items-center">
+              <span
+                class="block w-5 h-0.5 bg-white transition-all duration-300"
+                :class="{
+                  'rotate-45 translate-y-0.5': showMobileMenu,
+                  'mb-1': !showMobileMenu,
+                }"
+              ></span>
+              <span
+                class="block w-5 h-0.5 bg-white transition-all duration-300"
+                :class="{ 'opacity-0': showMobileMenu, '': !showMobileMenu }"
+              ></span>
+              <span
+                class="block w-5 h-0.5 bg-white transition-all duration-300"
+                :class="{
+                  '-rotate-45 -translate-y-0.5': showMobileMenu,
+                  'mt-1': !showMobileMenu,
+                }"
+              ></span>
+            </div>
           </button>
         </div>
 
         <!-- Mobile Menu -->
-        <div v-if="showMobileMenu" class="md:hidden mt-4 pb-4">
-          <div class="flex flex-col space-y-2">
+        <div
+          v-if="showMobileMenu"
+          class="md:hidden pb-4 border-t border-white/10 mt-2"
+        >
+          <div class="flex flex-col space-y-2 pt-4">
             <a
-              href="#home"
+              v-for="item in navItems"
+              :key="item.id"
+              :href="item.href"
+              class="text-gray-300 hover:text-white transition-colors py-2 px-2 rounded-lg hover:bg-white/10"
               @click="closeMobileMenu"
-              class="text-gray-300 hover:text-red-400 transition-colors py-2"
-              >Home</a
             >
-            <a
-              href="#about"
-              @click="closeMobileMenu"
-              class="text-gray-300 hover:text-red-400 transition-colors py-2"
-              >About</a
-            >
-            <a
-              href="#portfolio"
-              @click="closeMobileMenu"
-              class="text-gray-300 hover:text-red-400 transition-colors py-2"
-              >Portfolio</a
-            >
-            <a
-              href="#experience"
-              @click="closeMobileMenu"
-              class="text-gray-300 hover:text-red-400 transition-colors py-2"
-              >Experience</a
-            >
-            <a
-              href="#skills"
-              @click="closeMobileMenu"
-              class="text-gray-300 hover:text-red-400 transition-colors py-2"
-              >Skills</a
-            >
-            <a
-              href="#contact"
-              @click="closeMobileMenu"
-              class="text-gray-300 hover:text-red-400 transition-colors py-2"
-              >Contact</a
-            >
+              {{ item.label }}
+            </a>
           </div>
         </div>
       </div>
     </nav>
 
-    <!-- Hero Section with Photo -->
+    <!-- Hero Section -->
     <section
       id="home"
-      class="min-h-screen flex items-center justify-center relative overflow-hidden"
+      class="min-h-screen flex items-center justify-center px-4 lg:px-6 pt-16"
     >
-      <div
-        class="absolute inset-0 bg-gradient-to-br from-red-900/20 to-black/50"
-      ></div>
+      <div class="container mx-auto">
+        <div class="grid lg:grid-cols-12 gap-8 lg:gap-16 items-center">
+          <!-- Content -->
+          <div class="lg:col-span-7 space-y-6 animate-fade-in-up">
+            <div class="space-y-4">
+              <div class="inline-block">
+                <span
+                  class="px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 text-blue-300 text-sm font-medium"
+                >
+                  💫 Available for opportunities
+                </span>
+              </div>
 
-      <div class="container mx-auto px-6 relative z-10">
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
-          <!-- Photo Section -->
-          <div class="flex justify-center lg:justify-end order-2 lg:order-1">
-            <div class="relative animate-fade-in-up">
-              <!-- Photo Container with Gothic Frame Effect -->
-              <div class="relative photo-container">
-                <!-- Gothic Border Effect -->
-                <div
-                  class="absolute -inset-4 bg-gradient-to-r from-red-600 via-red-800 to-red-600 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"
-                ></div>
+              <h1
+                class="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight"
+              >
+                Hi, I'm
+                <span
+                  class="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent"
+                >
+                  {{ profile.name.split(" ")[0] }}
+                </span>
+              </h1>
 
-                <!-- Photo -->
+              <p class="text-xl md:text-2xl text-gray-300 font-light">
+                {{ profile.title }}
+              </p>
+
+              <p class="text-gray-400 text-lg leading-relaxed max-w-2xl">
+                {{ profile.summary }}
+              </p>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 py-6">
+              <div
+                v-for="stat in stats"
+                :key="stat.label"
+                class="text-center p-4 rounded-2xl glass-card hover:scale-105 transition-all duration-300"
+              >
+                <div class="text-2xl md:text-3xl font-bold text-white mb-1">
+                  {{ stat.value }}
+                </div>
+                <div class="text-gray-400 text-sm">{{ stat.label }}</div>
+              </div>
+            </div>
+
+            <!-- CTA Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 pt-4">
+              <a href="#portfolio" class="modern-btn-primary group">
+                <span class="mr-2">🚀</span>
+                View My Work
+                <span
+                  class="ml-2 transform group-hover:translate-x-1 transition-transform"
+                  >→</span
+                >
+              </a>
+
+              <a :href="`mailto:${profile.email}`" class="modern-btn-secondary">
+                <span class="mr-2">✉️</span>
+                Let's Talk
+              </a>
+            </div>
+          </div>
+
+          <!-- Photo -->
+          <div
+            class="lg:col-span-5 flex justify-center lg:justify-end order-first lg:order-last"
+          >
+            <div class="relative group">
+              <!-- Animated Background -->
+              <div
+                class="absolute -inset-4 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full opacity-30 group-hover:opacity-50 blur-xl transition-all duration-1000 animate-pulse"
+              ></div>
+
+              <!-- Photo Container -->
+              <div class="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96">
                 <div
-                  class="relative bg-gray-900 rounded-2xl p-2 photo-border-effect"
+                  class="w-full h-full rounded-full overflow-hidden border-4 border-white/20 shadow-2xl"
                 >
                   <img
                     :src="profilePhoto"
                     :alt="profile.name"
-                    class="w-80 h-80 lg:w-96 lg:h-96 object-cover rounded-xl shadow-2xl profile-photo"
+                    class="w-full h-full object-cover transform group-hover:scale-110 transition-all duration-700"
                     @error="handleImageError"
-                    loading="lazy"
+                    loading="eager"
                   />
-
-                  <!-- Overlay Gradient -->
-                  <div
-                    class="absolute inset-2 bg-gradient-to-t from-black/20 to-transparent rounded-xl pointer-events-none"
-                  ></div>
                 </div>
 
                 <!-- Floating Elements -->
                 <div
-                  class="absolute -top-6 -right-6 w-12 h-12 bg-red-600 rounded-full animate-float opacity-70"
+                  class="absolute top-4 -right-4 w-8 h-8 bg-blue-500 rounded-full animate-bounce opacity-80"
                 ></div>
                 <div
-                  class="absolute -bottom-4 -left-4 w-8 h-8 bg-red-400 rounded-full animate-bounce opacity-80"
+                  class="absolute -bottom-2 -left-2 w-6 h-6 bg-purple-500 rounded-full animate-ping opacity-60"
                 ></div>
                 <div
-                  class="absolute top-1/2 -left-8 w-6 h-6 bg-red-500 rounded-full animate-pulse opacity-60"
+                  class="absolute top-1/3 -left-6 w-4 h-4 bg-pink-500 rounded-full animate-pulse opacity-70"
                 ></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Text Content -->
-          <div class="text-center lg:text-left order-1 lg:order-2">
-            <div class="animate-fade-in-up">
-              <h1
-                class="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 font-serif text-glow"
-              >
-                {{ profile.name }}
-              </h1>
-              <p class="text-xl md:text-2xl text-red-400 mb-8 font-light">
-                {{ profile.title }}
-              </p>
-              <p
-                class="text-lg text-gray-300 max-w-2xl mx-auto lg:mx-0 mb-10 leading-relaxed"
-              >
-                {{ profile.summary }}
-              </p>
-
-              <!-- Quick Stats -->
-              <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
-                <div class="gothic-card p-4 rounded-lg text-center">
-                  <div class="text-2xl font-bold text-red-400">
-                    {{ portfolios.length }}+
-                  </div>
-                  <div class="text-sm text-gray-300">Projects</div>
-                </div>
-                <div class="gothic-card p-4 rounded-lg text-center">
-                  <div class="text-2xl font-bold text-red-400">
-                    {{ profile.education.gpa }}
-                  </div>
-                  <div class="text-sm text-gray-300">GPA</div>
-                </div>
-                <div
-                  class="gothic-card p-4 rounded-lg text-center md:col-span-1 col-span-2"
-                >
-                  <div class="text-2xl font-bold text-red-400">
-                    {{ yearsOfExperience }}+
-                  </div>
-                  <div class="text-sm text-gray-300">Years Experience</div>
-                </div>
-              </div>
-
-              <div
-                class="flex flex-col sm:flex-row justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-6"
-              >
-                <a
-                  :href="profile.github"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="blood-red-gradient px-8 py-3 text-white font-semibold rounded-lg hover:scale-105 transition-transform shadow-lg animate-shadow-pulse inline-flex items-center justify-center"
-                >
-                  <span class="mr-2">🔗</span>
-                  View GitHub
-                </a>
-                <a
-                  href="#portfolio"
-                  class="border-2 border-red-600 px-8 py-3 text-red-400 hover:bg-red-600 hover:text-white transition-all rounded-lg inline-flex items-center justify-center"
-                >
-                  <span class="mr-2">💼</span>
-                  View Portfolio
-                </a>
-                <a
-                  :href="`mailto:${profile.email}`"
-                  class="bg-gray-800 border border-gray-600 px-8 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-all rounded-lg inline-flex items-center justify-center"
-                >
-                  <span class="mr-2">✉️</span>
-                  Contact Me
-                </a>
               </div>
             </div>
           </div>
@@ -232,162 +189,97 @@
     </section>
 
     <!-- About Section -->
-    <section id="about" class="py-20 bg-black/30">
-      <div class="container mx-auto px-6">
-        <h2
-          class="text-4xl font-bold text-center text-white mb-16 font-serif text-glow"
-        >
-          About Me
-        </h2>
-        <div class="grid lg:grid-cols-3 gap-12">
-          <!-- Profile Summary with photo -->
+    <section id="about" class="py-20 lg:py-32 px-4 lg:px-6">
+      <div class="container mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="section-title">About Me</h2>
+          <p class="section-subtitle">Get to know me better</p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+          <!-- Profile Card -->
           <div class="lg:col-span-1">
-            <div class="gothic-card p-6 rounded-xl text-center hover-lift">
-              <div class="mb-6">
+            <div class="glass-card p-6 text-center h-full">
+              <div
+                class="w-24 h-24 mx-auto mb-6 rounded-full overflow-hidden border-4 border-blue-500/30"
+              >
                 <img
                   :src="profilePhoto"
                   :alt="profile.name"
-                  class="w-32 h-32 object-cover rounded-full mx-auto border-4 border-red-600/50 shadow-lg profile-photo"
-                  @error="handleImageError"
-                  loading="lazy"
+                  class="w-full h-full object-cover"
                 />
               </div>
-              <h3 class="text-xl font-bold text-red-400 mb-2">
+
+              <h3 class="text-xl font-bold text-white mb-2">
                 {{ profile.name }}
               </h3>
-              <p class="text-gray-300 mb-4">{{ profile.title }}</p>
-              <div class="space-y-3 text-sm text-gray-400">
-                <div class="flex items-center justify-center">
-                  <span class="text-red-400 mr-2">📧</span>
-                  <a
-                    :href="'mailto:' + profile.email"
-                    class="hover:text-red-400 transition-colors"
-                  >
-                    {{ profile.email }}
-                  </a>
-                </div>
-                <div class="flex items-center justify-center">
-                  <span class="text-red-400 mr-2">📱</span>
-                  <a
-                    :href="'tel:' + profile.phone"
-                    class="hover:text-red-400 transition-colors"
-                  >
-                    {{ profile.phone }}
-                  </a>
-                </div>
-                <div class="flex items-center justify-center">
-                  <span class="text-red-400 mr-2">📍</span>
+              <p class="text-blue-400 mb-4">{{ profile.title }}</p>
+
+              <div class="space-y-3 text-sm">
+                <a
+                  :href="`mailto:${profile.email}`"
+                  class="flex items-center justify-center space-x-2 text-gray-400 hover:text-blue-400 transition-colors"
+                >
+                  <span>✉️</span>
+                  <span>{{ profile.email }}</span>
+                </a>
+                <a
+                  :href="`tel:${profile.phone}`"
+                  class="flex items-center justify-center space-x-2 text-gray-400 hover:text-blue-400 transition-colors"
+                >
+                  <span>📱</span>
+                  <span>{{ profile.phone }}</span>
+                </a>
+                <div
+                  class="flex items-center justify-center space-x-2 text-gray-400"
+                >
+                  <span>📍</span>
                   <span>{{ profile.location }}</span>
-                </div>
-                <div class="flex items-center justify-center">
-                  <span class="text-red-400 mr-2">🔗</span>
-                  <a
-                    :href="profile.github"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="hover:text-red-400 transition-colors"
-                  >
-                    GitHub Profile
-                  </a>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Education & Details -->
-          <div class="lg:col-span-2 space-y-8">
-            <div class="gothic-card p-8 rounded-xl hover-lift">
-              <h3
-                class="text-2xl font-bold text-red-400 mb-6 flex items-center"
-              >
+          <!-- Details -->
+          <div class="lg:col-span-2 space-y-6">
+            <!-- Education -->
+            <div class="glass-card p-6">
+              <h3 class="text-xl font-bold text-white mb-4 flex items-center">
                 <span class="mr-3">🎓</span>
                 Education
               </h3>
-              <div class="space-y-6 text-gray-300">
-                <div class="border-l-4 border-red-600 pl-6">
-                  <h4 class="font-semibold text-white text-xl mb-2">
-                    {{ profile.education.degree }}
-                  </h4>
-                  <p class="text-red-300 text-lg mb-2">
-                    {{ profile.education.university }}
+              <div class="border-l-4 border-blue-500 pl-6">
+                <h4 class="text-lg font-semibold text-white mb-2">
+                  {{ profile.education.degree }}
+                </h4>
+                <p class="text-blue-400 mb-2">
+                  {{ profile.education.university }}
+                </p>
+                <p class="text-gray-400 mb-3">
+                  GPA: {{ profile.education.gpa }}
+                </p>
+                <div class="bg-gray-800/50 p-4 rounded-lg">
+                  <p class="text-sm text-gray-300">
+                    {{ profile.education.thesis }}
                   </p>
-                  <p class="text-sm mb-3">
-                    <span class="font-semibold">GPA:</span>
-                    {{ profile.education.gpa }}
-                  </p>
-                  <div class="bg-gray-800/50 p-4 rounded-lg">
-                    <h5 class="font-semibold text-white mb-2">
-                      Thesis Research:
-                    </h5>
-                    <p class="text-sm leading-relaxed">
-                      {{ profile.education.thesis }}
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
 
-            <div class="gothic-card p-8 rounded-xl hover-lift">
-              <h3
-                class="text-2xl font-bold text-red-400 mb-6 flex items-center"
-              >
+            <!-- Interests -->
+            <div class="glass-card p-6">
+              <h3 class="text-xl font-bold text-white mb-4 flex items-center">
                 <span class="mr-3">🎯</span>
                 Areas of Interest
               </h3>
               <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                 <span
-                  v-for="interest in profile.interests"
+                  v-for="interest in profile.interests.slice(0, 9)"
                   :key="interest"
-                  class="px-4 py-3 bg-red-900/30 text-red-300 rounded-lg text-sm border border-red-800 hover:bg-red-800/30 transition-colors text-center font-medium"
+                  class="px-3 py-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 rounded-lg text-sm text-center text-blue-300 hover:scale-105 transition-transform cursor-default"
                 >
                   {{ interest }}
                 </span>
-              </div>
-            </div>
-
-            <!-- Personal Qualities -->
-            <div class="gothic-card p-8 rounded-xl hover-lift">
-              <h3
-                class="text-2xl font-bold text-red-400 mb-6 flex items-center"
-              >
-                <span class="mr-3">⭐</span>
-                Core Strengths
-              </h3>
-              <div class="grid md:grid-cols-2 gap-6 text-gray-300">
-                <div>
-                  <h4 class="font-semibold text-white mb-2">
-                    Leadership & Teamwork
-                  </h4>
-                  <p class="text-sm">
-                    Experienced in leading programming study clubs and managing
-                    organizational activities.
-                  </p>
-                </div>
-                <div>
-                  <h4 class="font-semibold text-white mb-2">
-                    Technical Expertise
-                  </h4>
-                  <p class="text-sm">
-                    Proficient in full-stack development with modern frameworks
-                    and AI/ML technologies.
-                  </p>
-                </div>
-                <div>
-                  <h4 class="font-semibold text-white mb-2">
-                    Teaching & Mentoring
-                  </h4>
-                  <p class="text-sm">
-                    Active teaching assistant helping students with various
-                    computer science subjects.
-                  </p>
-                </div>
-                <div>
-                  <h4 class="font-semibold text-white mb-2">Problem Solving</h4>
-                  <p class="text-sm">
-                    Strong analytical skills with experience in research and
-                    practical implementation.
-                  </p>
-                </div>
               </div>
             </div>
           </div>
@@ -396,129 +288,113 @@
     </section>
 
     <!-- Portfolio Section -->
-    <section id="portfolio" class="py-20 particles-bg relative">
-      <div class="container mx-auto px-6 relative z-10">
-        <h2
-          class="text-4xl font-bold text-center text-white mb-16 font-serif text-glow"
-        >
-          Featured Projects
-        </h2>
+    <section id="portfolio" class="py-20 lg:py-32 px-4 lg:px-6">
+      <div class="container mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="section-title">Featured Work</h2>
+          <p class="section-subtitle">Some of my recent projects</p>
+        </div>
 
-        <!-- Portfolio Filter -->
-        <div class="flex flex-wrap justify-center gap-4 mb-12">
+        <!-- Filter Tabs -->
+        <div class="flex flex-wrap justify-center gap-2 mb-12">
           <button
-            @click="filterProjects('all')"
+            v-for="filter in filters"
+            :key="filter"
+            @click="activeFilter = filter"
             :class="[
-              'px-6 py-2 rounded-lg transition-all font-medium',
-              selectedFilter === 'all'
-                ? 'bg-red-600 text-white'
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700',
+              'px-6 py-3 rounded-full transition-all duration-300 text-sm font-medium',
+              activeFilter === filter
+                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg transform scale-105'
+                : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white',
             ]"
           >
-            All Projects
-          </button>
-          <button
-            v-for="type in projectTypes"
-            :key="type"
-            @click="filterProjects(type)"
-            :class="[
-              'px-6 py-2 rounded-lg transition-all font-medium',
-              selectedFilter === type
-                ? 'bg-red-600 text-white'
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700',
-            ]"
-          >
-            {{ type }}
+            {{ filter === "all" ? "All Projects" : filter }}
           </button>
         </div>
 
+        <!-- Projects Grid -->
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div
             v-for="project in filteredProjects"
             :key="project.id"
-            class="gothic-card p-6 rounded-xl hover-lift group cursor-pointer transform transition-all duration-300"
-            @click="showProject(project)"
+            class="glass-card p-6 hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer group"
+            @click="showProjectModal(project)"
           >
+            <!-- Project Header -->
             <div class="mb-4">
-              <h3
-                class="text-xl font-bold text-white group-hover:text-red-400 transition-colors mb-2"
-              >
-                {{ project.title }}
-              </h3>
-              <div class="flex items-center justify-between">
+              <div class="flex items-center justify-between mb-2">
                 <span
-                  class="px-3 py-1 bg-red-900/30 text-red-300 rounded-full text-xs border border-red-800"
+                  class="px-3 py-1 bg-gradient-to-r from-blue-500/30 to-purple-500/30 border border-blue-500/50 rounded-full text-xs font-medium text-blue-300"
                 >
                   {{ project.project_type }}
                 </span>
-                <span class="text-gray-400 text-sm">
-                  {{ formatDate(project.project_date) }}
-                </span>
+                <span class="text-gray-500 text-xs">{{
+                  formatDate(project.project_date)
+                }}</span>
               </div>
+
+              <h3
+                class="text-xl font-bold text-white group-hover:text-blue-400 transition-colors mb-2"
+              >
+                {{ project.title }}
+              </h3>
             </div>
 
-            <p class="text-gray-300 text-sm mb-4 line-clamp-3 leading-relaxed">
+            <!-- Project Description -->
+            <p class="text-gray-400 text-sm mb-4 line-clamp-3">
               {{ project.description }}
             </p>
 
+            <!-- Technologies -->
             <div class="mb-4">
-              <h4 class="text-sm font-semibold text-red-400 mb-2">
-                Technologies:
-              </h4>
-              <div class="flex flex-wrap gap-1">
+              <div class="flex flex-wrap gap-2">
                 <span
                   v-for="tech in getTechnologies(project.technologies).slice(
                     0,
                     4
                   )"
                   :key="tech"
-                  class="px-2 py-1 bg-gray-700 text-gray-300 rounded text-xs"
+                  class="px-2 py-1 bg-gray-800/50 rounded text-xs text-gray-300"
                 >
                   {{ tech }}
                 </span>
                 <span
                   v-if="getTechnologies(project.technologies).length > 4"
-                  class="px-2 py-1 bg-gray-600 text-gray-400 rounded text-xs"
+                  class="px-2 py-1 bg-gray-700/50 rounded text-xs text-gray-400"
                 >
                   +{{ getTechnologies(project.technologies).length - 4 }}
                 </span>
               </div>
             </div>
 
-            <div class="flex justify-between items-center">
+            <!-- Project Footer -->
+            <div
+              class="flex items-center justify-between pt-4 border-t border-white/10"
+            >
               <div class="flex items-center space-x-2">
-                <span
-                  v-if="project.challenges"
-                  class="text-yellow-400 text-xs"
-                  title="Has Challenges"
+                <span v-if="project.github_url" class="text-green-400 text-xs"
+                  >🔗</span
+                >
+                <span v-if="project.challenges" class="text-yellow-400 text-xs"
                   >⚡</span
                 >
-                <span
-                  v-if="project.solutions"
-                  class="text-green-400 text-xs"
-                  title="Solutions Provided"
+                <span v-if="project.solutions" class="text-blue-400 text-xs"
                   >✅</span
-                >
-                <span
-                  v-if="project.github_url"
-                  class="text-blue-400 text-xs"
-                  title="GitHub Available"
-                  >🔗</span
                 >
               </div>
               <span
-                class="text-red-400 group-hover:translate-x-1 transition-transform text-lg"
+                class="text-blue-400 group-hover:translate-x-2 transition-transform"
                 >→</span
               >
             </div>
           </div>
         </div>
 
-        <!-- View All Projects Button -->
-        <div class="text-center mt-12" v-if="filteredProjects.length >= 6">
+        <!-- View More Button -->
+        <div class="text-center mt-12" v-if="portfolios.length > 6">
           <button
             @click="showAllProjects = !showAllProjects"
-            class="blood-red-gradient px-8 py-3 text-white font-semibold rounded-lg hover:scale-105 transition-transform shadow-lg"
+            class="modern-btn-secondary"
           >
             {{ showAllProjects ? "Show Less" : "View All Projects" }}
           </button>
@@ -527,67 +403,71 @@
     </section>
 
     <!-- Experience Section -->
-    <section id="experience" class="py-20 bg-black/30">
-      <div class="container mx-auto px-6">
-        <h2
-          class="text-4xl font-bold text-center text-white mb-16 font-serif text-glow"
-        >
-          Professional Experience
-        </h2>
+    <section id="experience" class="py-20 lg:py-32 px-4 lg:px-6">
+      <div class="container mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="section-title">Experience</h2>
+          <p class="section-subtitle">My professional journey</p>
+        </div>
+
         <div class="max-w-4xl mx-auto">
-          <div
-            v-for="(experience, index) in experiences"
-            :key="experience.id"
-            class="relative mb-8 last:mb-0"
-          >
-            <!-- Timeline line -->
+          <div class="space-y-8">
             <div
-              v-if="index !== experiences.length - 1"
-              class="absolute left-4 top-16 w-0.5 h-full bg-gradient-to-b from-red-600/50 to-transparent"
-            ></div>
-
-            <!-- Timeline dot -->
-            <div
-              class="absolute left-2 top-4 w-4 h-4 bg-red-600 rounded-full border-4 border-gray-900 shadow-lg z-10"
-              :class="{ 'animate-pulse': experience.is_current }"
-            ></div>
-
-            <!-- Content -->
-            <div class="ml-12 gothic-card p-6 rounded-xl hover-lift">
+              v-for="(experience, index) in experiences"
+              :key="experience.id"
+              class="relative"
+            >
+              <!-- Timeline Line -->
               <div
-                class="flex flex-col md:flex-row md:justify-between md:items-start mb-4"
+                v-if="index !== experiences.length - 1"
+                class="absolute left-6 top-16 w-0.5 h-full bg-gradient-to-b from-blue-500/50 to-transparent hidden sm:block"
+              ></div>
+
+              <!-- Timeline Dot -->
+              <div
+                class="absolute left-4 top-6 w-4 h-4 bg-blue-500 rounded-full border-4 border-gray-900 shadow-lg hidden sm:block"
+                :class="{ 'animate-pulse bg-green-500': experience.is_current }"
+              ></div>
+
+              <!-- Content -->
+              <div
+                class="sm:ml-16 glass-card p-6 hover:scale-105 transition-all duration-300"
               >
-                <div class="flex-1">
-                  <h3 class="text-xl font-bold text-white mb-1">
-                    {{ experience.position }}
-                  </h3>
-                  <p class="text-red-400 font-medium mb-2">
-                    {{ experience.organization }}
-                  </p>
-                  <div
-                    class="flex items-center space-x-4 text-sm text-gray-400"
-                  >
-                    <span class="flex items-center">
-                      <span class="mr-1">📅</span>
-                      {{ formatDate(experience.start_date) }} -
-                      {{
-                        experience.is_current
-                          ? "Present"
-                          : formatDate(experience.end_date)
-                      }}
-                    </span>
-                    <span
-                      v-if="experience.is_current"
-                      class="px-2 py-1 bg-green-900/30 text-green-300 rounded-full text-xs border border-green-700"
+                <div
+                  class="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-4"
+                >
+                  <div class="flex-1">
+                    <h3 class="text-xl font-bold text-white mb-1">
+                      {{ experience.position }}
+                    </h3>
+                    <p class="text-blue-400 font-medium mb-2">
+                      {{ experience.organization }}
+                    </p>
+                    <div
+                      class="flex items-center flex-wrap gap-4 text-sm text-gray-400 mb-4"
                     >
-                      Current Position
-                    </span>
+                      <span class="flex items-center">
+                        <span class="mr-2">📅</span>
+                        {{ formatDate(experience.start_date) }} -
+                        {{
+                          experience.is_current
+                            ? "Present"
+                            : formatDate(experience.end_date)
+                        }}
+                      </span>
+                      <span
+                        v-if="experience.is_current"
+                        class="px-3 py-1 bg-green-500/20 border border-green-500/50 rounded-full text-green-400 text-xs font-medium"
+                      >
+                        Current
+                      </span>
+                    </div>
                   </div>
                 </div>
+                <p class="text-gray-300 leading-relaxed">
+                  {{ experience.description }}
+                </p>
               </div>
-              <p class="text-gray-300 leading-relaxed">
-                {{ experience.description }}
-              </p>
             </div>
           </div>
         </div>
@@ -595,72 +475,42 @@
     </section>
 
     <!-- Skills Section -->
-    <section id="skills" class="py-20">
-      <div class="container mx-auto px-6">
-        <h2
-          class="text-4xl font-bold text-center text-white mb-16 font-serif text-glow"
-        >
-          Technical Expertise
-        </h2>
+    <section id="skills" class="py-20 lg:py-32 px-4 lg:px-6">
+      <div class="container mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="section-title">Skills & Expertise</h2>
+          <p class="section-subtitle">Technologies I work with</p>
+        </div>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div
             v-for="(skillList, category) in skills"
             :key="category"
-            class="gothic-card p-6 rounded-xl hover-lift"
+            class="glass-card p-6 hover:scale-105 transition-all duration-300"
           >
             <div class="flex items-center mb-6">
               <span class="text-2xl mr-3">{{ getCategoryIcon(category) }}</span>
-              <h3 class="text-xl font-bold text-red-400">{{ category }}</h3>
+              <h3 class="text-xl font-bold text-white">{{ category }}</h3>
             </div>
 
             <div class="space-y-4">
-              <div v-for="skill in skillList" :key="skill.id" class="group">
+              <div v-for="skill in skillList" :key="skill.id">
                 <div class="flex justify-between items-center mb-2">
                   <span class="text-white font-medium">{{ skill.name }}</span>
                   <span
-                    class="text-gray-400 text-xs capitalize px-2 py-1 bg-gray-700 rounded"
+                    class="text-xs px-2 py-1 bg-blue-500/20 border border-blue-500/50 rounded text-blue-300 capitalize"
                   >
                     {{ skill.level }}
                   </span>
                 </div>
                 <div
-                  class="w-full bg-gray-800 rounded-full h-2 overflow-hidden"
+                  class="w-full bg-gray-800/50 rounded-full h-2 overflow-hidden"
                 >
                   <div
-                    class="h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full transition-all duration-1000 ease-out group-hover:animate-pulse"
+                    class="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-1000 hover:animate-pulse"
                     :style="{ width: getSkillWidth(skill.level) }"
                   ></div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Skill Summary -->
-        <div class="mt-16 text-center">
-          <div class="gothic-card p-8 rounded-xl max-w-4xl mx-auto">
-            <h3 class="text-2xl font-bold text-red-400 mb-6">
-              Skill Highlights
-            </h3>
-            <div class="grid md:grid-cols-3 gap-6 text-center">
-              <div>
-                <div class="text-3xl font-bold text-white mb-2">
-                  {{ totalSkillCount }}
-                </div>
-                <div class="text-gray-300">Total Skills</div>
-              </div>
-              <div>
-                <div class="text-3xl font-bold text-green-400 mb-2">
-                  {{ advancedSkillCount }}
-                </div>
-                <div class="text-gray-300">Advanced Level</div>
-              </div>
-              <div>
-                <div class="text-3xl font-bold text-blue-400 mb-2">
-                  {{ Object.keys(skills).length }}
-                </div>
-                <div class="text-gray-300">Categories</div>
               </div>
             </div>
           </div>
@@ -669,245 +519,176 @@
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="py-20 bg-black/30">
-      <div class="container mx-auto px-6">
-        <h2
-          class="text-4xl font-bold text-center text-white mb-16 font-serif text-glow"
-        >
-          Let's Connect
-        </h2>
+    <section id="contact" class="py-20 lg:py-32 px-4 lg:px-6 scroll-mt-20">
+      <div class="container mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="section-title">Get In Touch</h2>
+          <p class="section-subtitle">Let's work together</p>
+        </div>
 
-        <div class="max-w-4xl mx-auto">
-          <div class="grid md:grid-cols-2 gap-8">
-            <!-- Contact Info -->
-            <div class="gothic-card p-8 rounded-xl hover-lift">
-              <h3 class="text-2xl font-bold text-red-400 mb-6">Get In Touch</h3>
-              <div class="space-y-4">
-                <div class="flex items-center space-x-4">
-                  <div
-                    class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center"
-                  >
-                    <span class="text-white text-xl">📧</span>
-                  </div>
-                  <div>
-                    <p class="text-gray-400 text-sm">Email</p>
-                    <a
-                      :href="`mailto:${profile.email}`"
-                      class="text-white hover:text-red-400 transition-colors font-medium"
-                    >
-                      {{ profile.email }}
-                    </a>
-                  </div>
+        <div class="max-w-4xl mx-auto grid lg:grid-cols-2 gap-8">
+          <!-- Contact Info -->
+          <div class="glass-card p-8">
+            <h3 class="text-2xl font-bold text-white mb-6">Let's Connect</h3>
+
+            <div class="space-y-6">
+              <a
+                :href="`mailto:${profile.email}`"
+                class="flex items-center space-x-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-all duration-300 group"
+              >
+                <div
+                  class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center"
+                >
+                  <span class="text-white text-xl">✉️</span>
                 </div>
-
-                <div class="flex items-center space-x-4">
-                  <div
-                    class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center"
+                <div>
+                  <p class="text-gray-400 text-sm">Email</p>
+                  <p
+                    class="text-white font-medium group-hover:text-blue-400 transition-colors"
                   >
-                    <span class="text-white text-xl">📱</span>
-                  </div>
-                  <div>
-                    <p class="text-gray-400 text-sm">Phone</p>
-                    <a
-                      :href="`tel:${profile.phone}`"
-                      class="text-white hover:text-red-400 transition-colors font-medium"
-                    >
-                      {{ profile.phone }}
-                    </a>
-                  </div>
+                    {{ profile.email }}
+                  </p>
                 </div>
+              </a>
 
-                <div class="flex items-center space-x-4">
-                  <div
-                    class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center"
-                  >
-                    <span class="text-white text-xl">📍</span>
-                  </div>
-                  <div>
-                    <p class="text-gray-400 text-sm">Location</p>
-                    <p class="text-white font-medium">{{ profile.location }}</p>
-                  </div>
+              <a
+                :href="`tel:${profile.phone}`"
+                class="flex items-center space-x-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-all duration-300 group"
+              >
+                <div
+                  class="w-12 h-12 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center"
+                >
+                  <span class="text-white text-xl">📱</span>
                 </div>
-
-                <div class="flex items-center space-x-4">
-                  <div
-                    class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center"
+                <div>
+                  <p class="text-gray-400 text-sm">Phone</p>
+                  <p
+                    class="text-white font-medium group-hover:text-blue-400 transition-colors"
                   >
-                    <span class="text-white text-xl">🔗</span>
-                  </div>
-                  <div>
-                    <p class="text-gray-400 text-sm">GitHub</p>
-                    <a
-                      :href="profile.github"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="text-white hover:text-red-400 transition-colors font-medium"
-                    >
-                      View My Projects
-                    </a>
-                  </div>
+                    {{ profile.phone }}
+                  </p>
+                </div>
+              </a>
+
+              <div
+                class="flex items-center space-x-4 p-4 rounded-2xl bg-white/5"
+              >
+                <div
+                  class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center"
+                >
+                  <span class="text-white text-xl">📍</span>
+                </div>
+                <div>
+                  <p class="text-gray-400 text-sm">Location</p>
+                  <p class="text-white font-medium">{{ profile.location }}</p>
                 </div>
               </div>
-            </div>
 
-            <!-- Quick Contact Form -->
-            <div class="gothic-card p-8 rounded-xl hover-lift">
-              <h3 class="text-2xl font-bold text-red-400 mb-6">
-                Quick Message
-              </h3>
-              <form @submit.prevent="sendQuickMessage" class="space-y-4">
-                <div>
-                  <input
-                    type="text"
-                    v-model="contactForm.name"
-                    placeholder="Your Name"
-                    class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    required
-                  />
-                </div>
-                <div>
-                  <input
-                    type="email"
-                    v-model="contactForm.email"
-                    placeholder="Your Email"
-                    class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    required
-                  />
-                </div>
-                <div>
-                  <textarea
-                    v-model="contactForm.message"
-                    placeholder="Your Message"
-                    rows="4"
-                    class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-vertical"
-                    required
-                  ></textarea>
-                </div>
-                <button
-                  type="submit"
-                  :disabled="contactForm.processing"
-                  class="w-full blood-red-gradient px-6 py-3 text-white font-semibold rounded-lg hover:scale-105 transition-transform shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              <a
+                :href="profile.github"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center space-x-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-all duration-300 group"
+              >
+                <div
+                  class="w-12 h-12 bg-gradient-to-r from-gray-700 to-gray-900 rounded-full flex items-center justify-center"
                 >
-                  <span v-if="contactForm.processing">Sending...</span>
-                  <span v-else>Send Message</span>
-                </button>
-              </form>
+                  <span class="text-white text-xl">🔗</span>
+                </div>
+                <div>
+                  <p class="text-gray-400 text-sm">GitHub</p>
+                  <p
+                    class="text-white font-medium group-hover:text-blue-400 transition-colors"
+                  >
+                    View Profile
+                  </p>
+                </div>
+              </a>
             </div>
+          </div>
+
+          <!-- Contact Form -->
+          <div class="glass-card p-8">
+            <h3 class="text-2xl font-bold text-white mb-6">Send Message</h3>
+
+            <form @submit.prevent="sendMessage" class="space-y-6">
+              <div>
+                <input
+                  v-model="contactForm.name"
+                  type="text"
+                  placeholder="Your Name"
+                  required
+                  class="w-full px-4 py-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm transition-all duration-300"
+                />
+              </div>
+
+              <div>
+                <input
+                  v-model="contactForm.email"
+                  type="email"
+                  placeholder="Your Email"
+                  required
+                  class="w-full px-4 py-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm transition-all duration-300"
+                />
+              </div>
+
+              <div>
+                <textarea
+                  v-model="contactForm.message"
+                  placeholder="Your Message"
+                  rows="5"
+                  required
+                  class="w-full px-4 py-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm transition-all duration-300 resize-vertical"
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                :disabled="contactForm.processing"
+                class="w-full modern-btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span v-if="contactForm.processing">Sending...</span>
+                <span v-else>Send Message</span>
+              </button>
+            </form>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Footer -->
-    <footer class="py-12 bg-black/50">
-      <div class="container mx-auto px-6">
-        <div class="grid md:grid-cols-3 gap-8 mb-8">
-          <!-- Profile Summary -->
-          <div>
-            <h3 class="text-xl font-bold text-white mb-4">
-              {{ profile.name }}
-            </h3>
-            <p class="text-gray-400 text-sm leading-relaxed mb-4">
-              Computer Science student passionate about web development, AI, and
-              teaching. Currently serving as Teaching Assistant at Universitas
-              Islam Riau.
-            </p>
-            <div class="flex space-x-4">
-              <a
-                :href="profile.github"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-gray-400 hover:text-red-400 transition-colors"
-                title="GitHub"
-              >
-                <span class="text-xl">🔗</span>
-              </a>
-              <a
-                :href="`mailto:${profile.email}`"
-                class="text-gray-400 hover:text-red-400 transition-colors"
-                title="Email"
-              >
-                <span class="text-xl">📧</span>
-              </a>
-              <a
-                :href="`tel:${profile.phone}`"
-                class="text-gray-400 hover:text-red-400 transition-colors"
-                title="Phone"
-              >
-                <span class="text-xl">📱</span>
-              </a>
-            </div>
+    <footer class="py-12 px-4 lg:px-6 border-t border-white/10">
+      <div class="container mx-auto">
+        <div class="text-center">
+          <div class="flex justify-center items-center space-x-6 mb-6">
+            <a
+              :href="profile.github"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300 hover:scale-110"
+            >
+              <span>🔗</span>
+            </a>
+            <a
+              :href="`mailto:${profile.email}`"
+              class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300 hover:scale-110"
+            >
+              <span>✉️</span>
+            </a>
+            <a
+              :href="`tel:${profile.phone}`"
+              class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300 hover:scale-110"
+            >
+              <span>📱</span>
+            </a>
           </div>
 
-          <!-- Quick Links -->
-          <div>
-            <h3 class="text-xl font-bold text-white mb-4">Quick Links</h3>
-            <div class="space-y-2">
-              <a
-                href="#home"
-                class="block text-gray-400 hover:text-red-400 transition-colors text-sm"
-                >Home</a
-              >
-              <a
-                href="#about"
-                class="block text-gray-400 hover:text-red-400 transition-colors text-sm"
-                >About</a
-              >
-              <a
-                href="#portfolio"
-                class="block text-gray-400 hover:text-red-400 transition-colors text-sm"
-                >Portfolio</a
-              >
-              <a
-                href="#experience"
-                class="block text-gray-400 hover:text-red-400 transition-colors text-sm"
-                >Experience</a
-              >
-              <a
-                href="#skills"
-                class="block text-gray-400 hover:text-red-400 transition-colors text-sm"
-                >Skills</a
-              >
-              <a
-                href="#contact"
-                class="block text-gray-400 hover:text-red-400 transition-colors text-sm"
-                >Contact</a
-              >
-            </div>
-          </div>
-
-          <!-- Current Focus -->
-          <div>
-            <h3 class="text-xl font-bold text-white mb-4">Current Focus</h3>
-            <div class="space-y-3 text-sm text-gray-400">
-              <div class="flex items-center space-x-2">
-                <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                <span>Teaching Assistant at UIR</span>
-              </div>
-              <div class="flex items-center space-x-2">
-                <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
-                <span>Final Year Computer Science</span>
-              </div>
-              <div class="flex items-center space-x-2">
-                <span class="w-2 h-2 bg-yellow-500 rounded-full"></span>
-                <span>AI/ML Research Projects</span>
-              </div>
-              <div class="flex items-center space-x-2">
-                <span class="w-2 h-2 bg-red-500 rounded-full"></span>
-                <span>Full-Stack Development</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="border-t border-gray-700 pt-8 text-center">
-          <p class="text-gray-400 text-sm">
-            &copy; {{ new Date().getFullYear() }} {{ profile.name }}. All rights
+          <p class="text-gray-400 text-sm mb-2">
+            © {{ new Date().getFullYear() }} {{ profile.name }}. All rights
             reserved.
           </p>
-          <p class="text-gray-500 text-xs mt-2">
-            Built with Laravel, Vue.js, and lots of ☕ | GPA:
-            {{ profile.education.gpa }}
+          <p class="text-gray-500 text-xs">
+            Built with Laravel & Vue.js • GPA: {{ profile.education.gpa }}
           </p>
         </div>
       </div>
@@ -916,161 +697,96 @@
     <!-- Project Modal -->
     <div
       v-if="selectedProject"
-      class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
-      @click="closeModal"
+      class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      @click="closeProjectModal"
     >
       <div
-        class="gothic-card max-w-5xl w-full max-h-[90vh] overflow-y-auto rounded-xl relative"
+        class="glass-card max-w-4xl w-full max-h-[90vh] overflow-y-auto"
         @click.stop
       >
         <div class="p-8">
           <!-- Modal Header -->
           <div class="flex justify-between items-start mb-6">
-            <div class="flex-1">
-              <h2 class="text-3xl font-bold text-white mb-3">
+            <div>
+              <h2 class="text-3xl font-bold text-white mb-2">
                 {{ selectedProject.title }}
               </h2>
-              <div class="flex items-center space-x-4 mb-2">
+              <div class="flex items-center space-x-4">
                 <span
-                  class="px-3 py-1 bg-red-900/30 text-red-300 rounded-full text-sm border border-red-800"
+                  class="px-3 py-1 bg-gradient-to-r from-blue-500/30 to-purple-500/30 border border-blue-500/50 rounded-full text-sm text-blue-300"
                 >
                   {{ selectedProject.project_type }}
                 </span>
-                <span class="text-gray-400 text-sm">
-                  {{ formatDate(selectedProject.project_date) }}
-                </span>
+                <span class="text-gray-400 text-sm">{{
+                  formatDate(selectedProject.project_date)
+                }}</span>
               </div>
             </div>
             <button
-              @click="closeModal"
-              class="text-gray-400 hover:text-white text-3xl font-light ml-4 w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-700 transition-colors"
+              @click="closeProjectModal"
+              class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300 text-xl"
             >
               ×
             </button>
           </div>
 
-          <div class="grid lg:grid-cols-3 gap-8">
-            <!-- Main Content -->
-            <div class="lg:col-span-2 space-y-6">
-              <!-- Description -->
-              <div>
-                <h3
-                  class="text-xl font-semibold text-red-400 mb-3 flex items-center"
-                >
-                  <span class="mr-2">📝</span>
-                  Project Overview
-                </h3>
-                <p class="text-gray-300 leading-relaxed">
-                  {{ selectedProject.description }}
-                </p>
-              </div>
+          <!-- Modal Content -->
+          <div class="space-y-6">
+            <div>
+              <h3 class="text-xl font-semibold text-white mb-3">📝 Overview</h3>
+              <p class="text-gray-300 leading-relaxed">
+                {{ selectedProject.description }}
+              </p>
+            </div>
 
-              <!-- Challenges -->
-              <div v-if="selectedProject.challenges">
-                <h3
-                  class="text-xl font-semibold text-yellow-400 mb-3 flex items-center"
-                >
-                  <span class="mr-2">⚡</span>
-                  Challenges Faced
-                </h3>
-                <div
-                  class="bg-yellow-900/20 border-l-4 border-yellow-400 p-4 rounded-r-lg"
-                >
-                  <p class="text-gray-300 leading-relaxed">
-                    {{ selectedProject.challenges }}
-                  </p>
-                </div>
-              </div>
-
-              <!-- Solutions -->
-              <div v-if="selectedProject.solutions">
-                <h3
-                  class="text-xl font-semibold text-green-400 mb-3 flex items-center"
-                >
-                  <span class="mr-2">✅</span>
-                  Solutions & Lessons Learned
-                </h3>
-                <div
-                  class="bg-green-900/20 border-l-4 border-green-400 p-4 rounded-r-lg"
-                >
-                  <p class="text-gray-300 leading-relaxed">
-                    {{ selectedProject.solutions }}
-                  </p>
-                </div>
+            <div v-if="selectedProject.challenges">
+              <h3 class="text-xl font-semibold text-yellow-400 mb-3">
+                ⚡ Challenges
+              </h3>
+              <div
+                class="bg-yellow-500/10 border border-yellow-500/30 rounded-2xl p-4"
+              >
+                <p class="text-gray-300">{{ selectedProject.challenges }}</p>
               </div>
             </div>
 
-            <!-- Sidebar Info -->
-            <div class="space-y-6">
-              <!-- Technologies -->
-              <div class="bg-gray-800/50 p-6 rounded-lg">
-                <h3
-                  class="text-lg font-semibold text-red-400 mb-4 flex items-center"
-                >
-                  <span class="mr-2">🛠️</span>
-                  Technologies Used
-                </h3>
-                <div class="flex flex-wrap gap-2">
-                  <span
-                    v-for="tech in getTechnologies(
-                      selectedProject.technologies
-                    )"
-                    :key="tech"
-                    class="px-3 py-2 bg-gray-700 text-gray-300 rounded-lg text-sm font-medium border border-gray-600"
-                  >
-                    {{ tech }}
-                  </span>
-                </div>
+            <div v-if="selectedProject.solutions">
+              <h3 class="text-xl font-semibold text-green-400 mb-3">
+                ✅ Solutions
+              </h3>
+              <div
+                class="bg-green-500/10 border border-green-500/30 rounded-2xl p-4"
+              >
+                <p class="text-gray-300">{{ selectedProject.solutions }}</p>
               </div>
+            </div>
 
-              <!-- Project Details -->
-              <div class="bg-gray-800/50 p-6 rounded-lg">
-                <h3
-                  class="text-lg font-semibold text-red-400 mb-4 flex items-center"
+            <div>
+              <h3 class="text-xl font-semibold text-blue-400 mb-3">
+                🛠️ Technologies
+              </h3>
+              <div class="flex flex-wrap gap-3">
+                <span
+                  v-for="tech in getTechnologies(selectedProject.technologies)"
+                  :key="tech"
+                  class="px-4 py-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/50 rounded-full text-blue-300 font-medium"
                 >
-                  <span class="mr-2">ℹ️</span>
-                  Project Details
-                </h3>
-                <div class="space-y-3 text-sm">
-                  <div class="flex justify-between">
-                    <span class="text-gray-400">Type:</span>
-                    <span class="text-gray-300 font-medium">{{
-                      selectedProject.project_type
-                    }}</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="text-gray-400">Date:</span>
-                    <span class="text-gray-300 font-medium">{{
-                      formatDate(selectedProject.project_date)
-                    }}</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="text-gray-400">Status:</span>
-                    <span class="text-green-400 font-medium">Completed</span>
-                  </div>
-                </div>
+                  {{ tech }}
+                </span>
               </div>
+            </div>
 
-              <!-- Actions -->
-              <div class="space-y-3">
-                <a
-                  v-if="selectedProject.github_url"
-                  :href="selectedProject.github_url"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="block w-full blood-red-gradient px-6 py-3 text-white text-center rounded-lg hover:scale-105 transition-transform shadow-lg font-medium"
-                >
-                  <span class="mr-2">🔗</span>
-                  View on GitHub
-                </a>
-
-                <button
-                  @click="closeModal"
-                  class="block w-full bg-gray-700 hover:bg-gray-600 px-6 py-3 text-gray-300 text-center rounded-lg transition-colors font-medium"
-                >
-                  Close Details
-                </button>
-              </div>
+            <div v-if="selectedProject.github_url" class="pt-4">
+              <a
+                :href="selectedProject.github_url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="modern-btn-primary inline-flex items-center"
+              >
+                <span class="mr-2">🔗</span>
+                View on GitHub
+                <span class="ml-2">↗</span>
+              </a>
             </div>
           </div>
         </div>
@@ -1081,31 +797,17 @@
     <button
       v-if="showBackToTop"
       @click="scrollToTop"
-      class="fixed bottom-8 right-8 w-12 h-12 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg transition-all duration-300 z-40 flex items-center justify-center"
-      title="Back to Top"
+      class="fixed bottom-8 right-8 w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-40 flex items-center justify-center text-white hover:scale-110"
     >
-      <span class="text-xl">↑</span>
+      ↑
     </button>
-
-    <!-- Loading Overlay -->
-    <div
-      v-if="isLoading"
-      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-    >
-      <div class="gothic-card p-8 rounded-xl text-center">
-        <div
-          class="animate-spin w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full mx-auto mb-4"
-        ></div>
-        <p class="text-white">Loading...</p>
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 
-// Props from Laravel backend
+// Props
 const props = defineProps({
   portfolios: Array,
   experiences: Array,
@@ -1113,15 +815,14 @@ const props = defineProps({
   profile: Object,
 });
 
-// State management
-const selectedProject = ref(null);
+// Reactive state
 const showMobileMenu = ref(false);
+const selectedProject = ref(null);
+const activeFilter = ref("all");
 const showAllProjects = ref(false);
-const selectedFilter = ref("all");
 const showBackToTop = ref(false);
-const isLoading = ref(false);
 
-// Contact form state
+// Contact form
 const contactForm = ref({
   name: "",
   email: "",
@@ -1129,51 +830,49 @@ const contactForm = ref({
   processing: false,
 });
 
+// Navigation items
+const navItems = ref([
+  { id: "home", label: "Home", href: "#home" },
+  { id: "about", label: "About", href: "#about" },
+  { id: "portfolio", label: "Portfolio", href: "#portfolio" },
+  { id: "experience", label: "Experience", href: "#experience" },
+  { id: "skills", label: "Skills", href: "#skills" },
+  { id: "contact", label: "Contact", href: "#contact" },
+]);
+
 // Computed properties
-const profilePhoto = computed(() => {
-  return "/images/poto1.png";
-});
+const profilePhoto = computed(() => "/images/poto1.png");
 
-const yearsOfExperience = computed(() => {
-  const startYear = 2023; // Based on earliest experience
-  const currentYear = new Date().getFullYear();
-  return currentYear - startYear;
-});
+const stats = computed(() => [
+  { label: "Projects", value: `${props.portfolios.length}+` },
+  { label: "GPA", value: props.profile.education.gpa },
+  { label: "Experience", value: `${calculateYearsOfExperience()}yr` },
+  { label: "Skills", value: `${Object.values(props.skills).flat().length}+` },
+]);
 
-const projectTypes = computed(() => {
+const filters = computed(() => {
   const types = [...new Set(props.portfolios.map((p) => p.project_type))];
-  return types;
+  return ["all", ...types];
 });
 
 const filteredProjects = computed(() => {
   let filtered =
-    selectedFilter.value === "all"
+    activeFilter.value === "all"
       ? props.portfolios
-      : props.portfolios.filter((p) => p.project_type === selectedFilter.value);
+      : props.portfolios.filter((p) => p.project_type === activeFilter.value);
 
   return showAllProjects.value ? filtered : filtered.slice(0, 6);
 });
 
-const totalSkillCount = computed(() => {
-  return Object.values(props.skills).reduce(
-    (total, skillList) => total + skillList.length,
-    0
-  );
-});
-
-const advancedSkillCount = computed(() => {
-  return Object.values(props.skills).reduce((total, skillList) => {
-    return total + skillList.filter((skill) => skill.level === "mahir").length;
-  }, 0);
-});
-
 // Methods
-const showProject = (project) => {
-  selectedProject.value = project;
-};
-
-const closeModal = () => {
-  selectedProject.value = null;
+const calculateYearsOfExperience = () => {
+  if (!props.experiences.length) return 0;
+  const firstExp = props.experiences.reduce((earliest, exp) => {
+    return new Date(exp.start_date) < new Date(earliest.start_date)
+      ? exp
+      : earliest;
+  });
+  return new Date().getFullYear() - new Date(firstExp.start_date).getFullYear();
 };
 
 const toggleMobileMenu = () => {
@@ -1184,36 +883,39 @@ const closeMobileMenu = () => {
   showMobileMenu.value = false;
 };
 
-const filterProjects = (filter) => {
-  selectedFilter.value = filter;
-  showAllProjects.value = false;
+const handleNavClick = (event) => {
+  const href = event.target.getAttribute("href");
+  if (href && href.startsWith("#")) {
+    event.preventDefault();
+    document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+  }
 };
 
-const handleImageError = (event) => {
-  console.warn("Image failed to load:", event.target.src);
-  // You could set a placeholder image here
-  event.target.style.display = "none";
+const showProjectModal = (project) => {
+  selectedProject.value = project;
+  document.body.style.overflow = "hidden";
+};
+
+const closeProjectModal = () => {
+  selectedProject.value = null;
+  document.body.style.overflow = "auto";
 };
 
 const formatDate = (date) => {
-  if (!date) return "";
   return new Date(date).toLocaleDateString("en-US", {
     year: "numeric",
-    month: "long",
+    month: "short",
   });
 };
 
 const getTechnologies = (technologies) => {
-  if (!technologies) return [];
-  return technologies.split(", ").map((tech) => tech.trim());
+  return technologies
+    ? technologies.split(", ").map((tech) => tech.trim())
+    : [];
 };
 
 const getSkillWidth = (level) => {
-  const levels = {
-    pemula: "40%",
-    menengah: "70%",
-    mahir: "95%",
-  };
+  const levels = { pemula: "40%", menengah: "70%", mahir: "95%" };
   return levels[level] || "50%";
 };
 
@@ -1224,13 +926,17 @@ const getCategoryIcon = (category) => {
     "Mobile Programming": "📱",
     Database: "🗄️",
     "Office Suite": "💼",
-    "Programming Concepts": "🧠",
+    Language: "🗣️",
+    Framework: "⚙️",
     "Artificial Intelligence": "🤖",
     "Soft Skills": "👥",
-    Language: "🗣️",
-    "Specialized Technologies": "⚙️",
   };
   return icons[category] || "🛠️";
+};
+
+const handleImageError = (event) => {
+  console.warn("Image failed to load");
+  event.target.style.display = "none";
 };
 
 const scrollToTop = () => {
@@ -1238,56 +944,143 @@ const scrollToTop = () => {
 };
 
 const handleScroll = () => {
-  showBackToTop.value = window.scrollY > 400;
+  showBackToTop.value = window.scrollY > 500;
 };
 
-const sendQuickMessage = () => {
+const sendMessage = () => {
   contactForm.value.processing = true;
 
-  // Create mailto link with form data
-  const subject = `Message from ${contactForm.value.name}`;
-  const body = `Name: ${contactForm.value.name}\nEmail: ${contactForm.value.email}\n\nMessage:\n${contactForm.value.message}`;
-  const mailtoLink = `mailto:${
+  const { name, email, message } = contactForm.value;
+  const subject = `Portfolio Contact from ${name}`;
+  const body = `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`;
+
+  window.location.href = `mailto:${
     props.profile.email
   }?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-  // Open mail client
-  window.location.href = mailtoLink;
-
-  // Reset form
   setTimeout(() => {
-    contactForm.value = {
-      name: "",
-      email: "",
-      message: "",
-      processing: false,
-    };
+    contactForm.value = { name: "", email: "", message: "", processing: false };
   }, 1000);
 };
 
-// Lifecycle hooks
+// Lifecycle
 onMounted(() => {
   window.addEventListener("scroll", handleScroll);
-
-  // Add smooth scroll behavior for anchor links
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener("click", function (e) {
-      e.preventDefault();
-      const target = document.querySelector(this.getAttribute("href"));
-      if (target) {
-        target.scrollIntoView({ behavior: "smooth" });
-        closeMobileMenu();
-      }
-    });
-  });
 });
 
 onUnmounted(() => {
   window.removeEventListener("scroll", handleScroll);
+  document.body.style.overflow = "auto";
 });
 </script>
 
 <style scoped>
+/* Modern gradient background */
+.modern-bg {
+  background: linear-gradient(
+    135deg,
+    #0f0f23 0%,
+    #1a0b2e 25%,
+    #16213e 50%,
+    #0f3460 75%,
+    #0e4b82 100%
+  );
+  background-attachment: fixed;
+  position: relative;
+}
+
+.modern-bg::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+      circle at 20% 20%,
+      rgba(59, 130, 246, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(147, 51, 234, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 40% 60%,
+      rgba(236, 72, 153, 0.05) 0%,
+      transparent 50%
+    );
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Glassmorphism effects */
+.glassmorphism {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.3);
+}
+
+/* Modern buttons */
+.modern-btn-primary {
+  @apply px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-2xl;
+  @apply hover:from-blue-600 hover:to-purple-700 transform hover:scale-105;
+  @apply transition-all duration-300 shadow-lg hover:shadow-xl;
+  @apply flex items-center justify-center space-x-2;
+}
+
+.modern-btn-secondary {
+  @apply px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white font-semibold rounded-2xl;
+  @apply hover:bg-white/20 hover:border-white/30 transform hover:scale-105;
+  @apply transition-all duration-300;
+  @apply flex items-center justify-center space-x-2;
+}
+
+/* Section titles */
+.section-title {
+  @apply text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4;
+  background: linear-gradient(135deg, #ffffff 0%, #3b82f6 50%, #9333ea 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.section-subtitle {
+  @apply text-lg text-gray-400 max-w-2xl mx-auto;
+}
+
+/* Animations */
+.animate-fade-in-up {
+  animation: fadeInUp 1s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Line clamp utility */
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -1295,44 +1088,8 @@ onUnmounted(() => {
   overflow: hidden;
 }
 
-/* Custom animations */
-@keyframes tilt {
-  0%,
-  50%,
-  100% {
-    transform: rotate(0deg);
-  }
-  25% {
-    transform: rotate(1deg);
-  }
-  75% {
-    transform: rotate(-1deg);
-  }
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  33% {
-    transform: translateY(-10px) rotate(120deg);
-  }
-  66% {
-    transform: translateY(5px) rotate(240deg);
-  }
-}
-
-.animate-tilt {
-  animation: tilt 10s infinite linear;
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-/* Smooth transitions */
-* {
+/* Smooth scrolling */
+html {
   scroll-behavior: smooth;
 }
 
@@ -1342,15 +1099,177 @@ onUnmounted(() => {
 }
 
 ::-webkit-scrollbar-track {
-  background: #1f2937;
+  background: rgba(0, 0, 0, 0.1);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #dc2626;
+  background: linear-gradient(135deg, #3b82f6, #9333ea);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #b91c1c;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .section-title {
+    @apply text-3xl md:text-4xl;
+  }
+
+  .glass-card {
+    border-radius: 16px;
+    padding: 1.5rem;
+  }
+
+  .modern-btn-primary,
+  .modern-btn-secondary {
+    @apply px-6 py-3 text-sm;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up,
+  .animate-bounce,
+  .animate-ping,
+  .animate-pulse {
+    animation: none;
+  }
+
+  .hover\:scale-105:hover,
+  .hover\:scale-110:hover {
+    transform: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .text-gray-300,
+  .text-gray-400 {
+    color: #ffffff;
+  }
+}
+
+/* Focus states for accessibility */
+button:focus,
+a:focus,
+input:focus,
+textarea:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Loading states */
+.loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.loading::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Hover effects for cards */
+.glass-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+/* Gradient text effect */
+.gradient-text {
+  background: linear-gradient(135deg, #3b82f6, #9333ea, #ec4899);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Floating animation for decorative elements */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-10px) rotate(5deg);
+  }
+  66% {
+    transform: translateY(5px) rotate(-5deg);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Particle effect background */
+.particles::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(
+      1px 1px at 25px 5px,
+      rgba(59, 130, 246, 0.3),
+      transparent
+    ),
+    radial-gradient(1px 1px at 50px 25px, rgba(147, 51, 234, 0.3), transparent),
+    radial-gradient(1px 1px at 125px 20px, rgba(236, 72, 153, 0.3), transparent),
+    radial-gradient(1px 1px at 150px 75px, rgba(59, 130, 246, 0.3), transparent);
+  background-size: 200px 100px;
+  animation: particleMove 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes particleMove {
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  100% {
+    transform: translateX(-200px) translateY(-100px);
+  }
 }
 </style>
