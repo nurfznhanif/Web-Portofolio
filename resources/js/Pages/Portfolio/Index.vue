@@ -78,118 +78,117 @@
     </nav>
 
     <!-- Hero Section -->
-    <!-- Hero Section with proper spacing -->
-<section
-  id="home"
-  class="min-h-screen flex items-center justify-center px-4 lg:px-6 pt-24 pb-16"
->
-  <div class="container mx-auto">
-    <div class="grid lg:grid-cols-12 gap-8 lg:gap-16 items-center">
-      <!-- Content -->
-      <div class="lg:col-span-7 space-y-8 animate-fade-in-up">
-        <div class="space-y-6">
-          <!-- Badge with proper spacing from navbar -->
-          <div class="inline-block pt-4">
-            <span
-              class="px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 text-blue-300 text-sm font-medium backdrop-blur-sm shadow-lg"
-            >
-              💫 Available for opportunities
-            </span>
-          </div>
+    <section
+      id="home"
+      class="min-h-screen flex items-center justify-center px-4 lg:px-6 pt-24 pb-16"
+    >
+      <div class="container mx-auto">
+        <div class="grid lg:grid-cols-12 gap-8 lg:gap-16 items-center">
+          <!-- Content -->
+          <div class="lg:col-span-7 space-y-8 animate-fade-in-up">
+            <div class="space-y-6">
+              <!-- Badge with proper spacing from navbar -->
+              <div class="inline-block pt-4">
+                <span
+                  class="px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 text-blue-300 text-sm font-medium backdrop-blur-sm shadow-lg"
+                >
+                  💫 Available for opportunities
+                </span>
+              </div>
 
-          <!-- Main heading with better spacing -->
-          <h1
-            class="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mt-6"
-          >
-            Hi, I'm
-            <span
-              class="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent"
-            >
-              {{ profile.name.split(" ")[0] }}
-            </span>
-          </h1>
+              <!-- Main heading with better spacing -->
+              <h1
+                class="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mt-6"
+              >
+                Hi, I'm
+                <span
+                  class="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent"
+                >
+                  {{ profile.name.split(" ")[0] }}
+                </span>
+              </h1>
 
-          <p class="text-xl md:text-2xl text-gray-300 font-light mt-4">
-            {{ profile.title }}
-          </p>
+              <p class="text-xl md:text-2xl text-gray-300 font-light mt-4">
+                {{ profile.title }}
+              </p>
 
-          <p class="text-gray-400 text-lg leading-relaxed max-w-2xl mt-4">
-            {{ profile.summary }}
-          </p>
-        </div>
-
-        <!-- Stats with better spacing -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 py-8">
-          <div
-            v-for="stat in stats"
-            :key="stat.label"
-            class="text-center p-4 rounded-2xl glass-card hover:scale-105 transition-all duration-300"
-          >
-            <div class="text-2xl md:text-3xl font-bold text-white mb-1">
-              {{ stat.value }}
-            </div>
-            <div class="text-gray-400 text-sm">{{ stat.label }}</div>
-          </div>
-        </div>
-
-        <!-- CTA Buttons with proper spacing -->
-        <div class="flex flex-col sm:flex-row gap-4 pt-6">
-          <a href="#portfolio" class="modern-btn-primary group">
-            <span class="mr-2">🚀</span>
-            View My Work
-            <span
-              class="ml-2 transform group-hover:translate-x-1 transition-transform"
-              >→</span
-            >
-          </a>
-
-          <a :href="`mailto:${profile.email}`" class="modern-btn-secondary">
-            <span class="mr-2">✉️</span>
-            Let's Talk
-          </a>
-        </div>
-      </div>
-
-      <!-- Photo section remains the same -->
-      <div
-        class="lg:col-span-5 flex justify-center lg:justify-end order-first lg:order-last"
-      >
-        <div class="relative group">
-          <!-- Animated Background -->
-          <div
-            class="absolute -inset-4 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full opacity-30 group-hover:opacity-50 blur-xl transition-all duration-1000 animate-pulse"
-          ></div>
-
-          <!-- Photo Container -->
-          <div class="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96">
-            <div
-              class="w-full h-full rounded-full overflow-hidden border-4 border-white/20 shadow-2xl"
-            >
-              <img
-                :src="profilePhoto"
-                :alt="profile.name"
-                class="w-full h-full object-cover transform group-hover:scale-110 transition-all duration-700"
-                @error="handleImageError"
-                loading="eager"
-              />
+              <p class="text-gray-400 text-lg leading-relaxed max-w-2xl mt-4">
+                {{ profile.summary }}
+              </p>
             </div>
 
-            <!-- Floating Elements -->
-            <div
-              class="absolute top-4 -right-4 w-8 h-8 bg-blue-500 rounded-full animate-bounce opacity-80"
-            ></div>
-            <div
-              class="absolute -bottom-2 -left-2 w-6 h-6 bg-purple-500 rounded-full animate-ping opacity-60"
-            ></div>
-            <div
-              class="absolute top-1/3 -left-6 w-4 h-4 bg-pink-500 rounded-full animate-pulse opacity-70"
-            ></div>
+            <!-- Stats with better spacing -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 py-8">
+              <div
+                v-for="stat in stats"
+                :key="stat.label"
+                class="text-center p-4 rounded-2xl glass-card hover:scale-105 transition-all duration-300"
+              >
+                <div class="text-2xl md:text-3xl font-bold text-white mb-1">
+                  {{ stat.value }}
+                </div>
+                <div class="text-gray-400 text-sm">{{ stat.label }}</div>
+              </div>
+            </div>
+
+            <!-- CTA Buttons with proper spacing -->
+            <div class="flex flex-col sm:flex-row gap-4 pt-6">
+              <a href="#portfolio" class="modern-btn-primary group">
+                <span class="mr-2">🚀</span>
+                View My Work
+                <span
+                  class="ml-2 transform group-hover:translate-x-1 transition-transform"
+                  >→</span
+                >
+              </a>
+
+              <a :href="`mailto:${profile.email}`" class="modern-btn-secondary">
+                <span class="mr-2">✉️</span>
+                Let's Talk
+              </a>
+            </div>
+          </div>
+
+          <!-- Photo section remains the same -->
+          <div
+            class="lg:col-span-5 flex justify-center lg:justify-end order-first lg:order-last"
+          >
+            <div class="relative group">
+              <!-- Animated Background -->
+              <div
+                class="absolute -inset-4 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full opacity-30 group-hover:opacity-50 blur-xl transition-all duration-1000 animate-pulse"
+              ></div>
+
+              <!-- Photo Container -->
+              <div class="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96">
+                <div
+                  class="w-full h-full rounded-full overflow-hidden border-4 border-white/20 shadow-2xl"
+                >
+                  <img
+                    :src="profilePhoto"
+                    :alt="profile.name"
+                    class="w-full h-full object-cover transform group-hover:scale-110 transition-all duration-700"
+                    @error="handleImageError"
+                    loading="eager"
+                  />
+                </div>
+
+                <!-- Floating Elements -->
+                <div
+                  class="absolute top-4 -right-4 w-8 h-8 bg-blue-500 rounded-full animate-bounce opacity-80"
+                ></div>
+                <div
+                  class="absolute -bottom-2 -left-2 w-6 h-6 bg-purple-500 rounded-full animate-ping opacity-60"
+                ></div>
+                <div
+                  class="absolute top-1/3 -left-6 w-4 h-4 bg-pink-500 rounded-full animate-pulse opacity-70"
+                ></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
     <!-- About Section -->
     <section id="about" class="py-20 lg:py-32 px-4 lg:px-6">

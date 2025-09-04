@@ -1,6 +1,8 @@
 <template>
   <!-- Modern Navigation with proper spacing -->
-  <nav class="fixed top-0 w-full z-50 glassmorphism border-b border-white/10 h-16">
+  <nav
+    class="fixed top-0 w-full z-50 glassmorphism border-b border-white/10 h-16"
+  >
     <div class="container mx-auto px-4 lg:px-6 h-full">
       <div class="flex justify-between items-center h-full">
         <!-- Logo -->
@@ -128,11 +130,12 @@ const handleNavClick = (event) => {
       // Calculate offset for fixed navbar
       const navbarHeight = 64; // 4rem = 64px
       const elementPosition = target.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - navbarHeight - 16; // Extra 16px spacing
+      const offsetPosition =
+        elementPosition + window.pageYOffset - navbarHeight - 16; // Extra 16px spacing
 
       window.scrollTo({
         top: offsetPosition,
-        behavior: "smooth"
+        behavior: "smooth",
       });
 
       // Close mobile menu if open
@@ -195,12 +198,24 @@ defineExpose({
   animation: slideInLeft 0.3s ease forwards;
 }
 
-.mobile-menu-item:nth-child(1) { animation-delay: 0.1s; }
-.mobile-menu-item:nth-child(2) { animation-delay: 0.2s; }
-.mobile-menu-item:nth-child(3) { animation-delay: 0.3s; }
-.mobile-menu-item:nth-child(4) { animation-delay: 0.4s; }
-.mobile-menu-item:nth-child(5) { animation-delay: 0.5s; }
-.mobile-menu-item:nth-child(6) { animation-delay: 0.6s; }
+.mobile-menu-item:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.mobile-menu-item:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.mobile-menu-item:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.mobile-menu-item:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.mobile-menu-item:nth-child(5) {
+  animation-delay: 0.5s;
+}
+.mobile-menu-item:nth-child(6) {
+  animation-delay: 0.6s;
+}
 
 @keyframes slideInLeft {
   to {

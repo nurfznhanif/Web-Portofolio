@@ -59,11 +59,11 @@ class DatabaseSeeder extends Seeder
         // Work Experience - Based on CV Document
         $experiences = [
             [
-                'position' => 'Teaching Assistant',
+                'position' => 'Lecturer Assistant',
                 'organization' => 'Universitas Islam Riau',
                 'description' => 'Support learning processes for various computer science courses including: Database Systems, Programming Introduction, Data Structures, Component-Based Programming, Artificial Intelligence, Mobile Programming Fundamentals, Algorithm Design and Analysis, Graph Database, Native Mobile Application Development, Fuzzy Logic, and Machine Learning. Assist students with practical assignments, provide guidance on programming concepts, and help evaluate student projects.',
                 'start_date' => '2023-10-01',
-                'end_date' => null,
+                'end_date' => '2025-07-30',
                 'is_current' => true
             ],
             [

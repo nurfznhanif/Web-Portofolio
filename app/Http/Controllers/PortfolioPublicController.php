@@ -381,7 +381,7 @@ class PortfolioPublicController extends Controller
             // Personal Information
             'name' => 'Nurfauzan Hanif',
             'title' => 'Informatics Engineer',
-            'summary' => 'Fresh Graduate Informatics Engineering student at Universitas Islam Riau with a strong foundation in full-stack development, AI/ML, and data analysis. Currently serving as a Lecturer Assistant while maintaining a 3.76 GPA. Experienced in modern web technologies, mobile development, and research methodologies.',
+            'summary' => 'Fresh Graduate of Informatics Engineering at Universitas Islam Riau with a strong foundation in full-stack development, AI/ML, and data analysis. Graduated with a 3.76 GPA and equipped with hands-on experience in modern web technologies, mobile development, and research methodologies. Open to career opportunities where I can contribute my technical expertise, problem-solving skills, and passion for innovation to deliver impactful solutions.',
 
             // Contact Information
             'email' => 'nrfznhnf@gmail.com',
