@@ -1,28 +1,23 @@
-<!-- FormSelect.vue -->
+// resources/js/Components/Form/FormSelect.vue
 <template>
   <div class="mb-4">
-    <label
-      v-if="label"
-      :for="id"
-      class="block text-sm font-medium text-gray-300 mb-2"
-    >
+    <label v-if="label" class="block text-sm font-medium text-gray-300 mb-2">
       {{ label }}
       <span v-if="required" class="text-red-400">*</span>
     </label>
 
     <select
-      :id="id"
       :value="modelValue"
+      @change="$emit('update:modelValue', $event.target.value)"
       :required="required"
       :disabled="disabled"
-      @change="$emit('update:modelValue', $event.target.value)"
-      class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
-      :class="{
-        'border-red-500 focus:border-red-500 focus:ring-red-500/20': hasError,
-        'opacity-50 cursor-not-allowed': disabled,
-      }"
+      :class="[
+        'w-full px-3 py-2 bg-gray-700 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors',
+        hasError ? 'border-red-500' : 'border-gray-600',
+        disabled ? 'opacity-50 cursor-not-allowed' : '',
+      ]"
     >
-      <option value="" disabled>{{ placeholder || "Select an option" }}</option>
+      <option value="" v-if="placeholder" disabled>{{ placeholder }}</option>
       <option
         v-for="option in options"
         :key="option.value"
@@ -55,7 +50,6 @@ const props = defineProps({
   disabled: Boolean,
   error: String,
   help: String,
-  id: String,
   options: {
     type: Array,
     default: () => [],

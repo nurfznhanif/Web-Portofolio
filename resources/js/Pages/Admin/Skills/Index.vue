@@ -1,4 +1,4 @@
-<!-- Admin/Skills/Index.vue -->
+<!-- resources/js/Pages/Admin/Skill/Index.vue -->
 <template>
   <DashboardLayout>
     <div class="p-6">
@@ -25,164 +25,195 @@
               d="M12 6v6m0 0v6m0-6h6m-6 0H6"
             />
           </svg>
-          Add Skill
+          Add New Skill
         </Link>
       </div>
 
-      <!-- Filter Tabs -->
-      <div class="mb-6">
-        <div class="border-b border-gray-700">
-          <nav class="-mb-px flex space-x-8">
-            <button
-              v-for="category in categories"
-              :key="category.key"
-              @click="activeCategory = category.key"
-              class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
-              :class="{
-                'border-blue-500 text-blue-400':
-                  activeCategory === category.key,
-                'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-300':
-                  activeCategory !== category.key,
-              }"
-            >
-              {{ category.label }}
-              <span class="ml-2 px-2 py-0.5 rounded-full text-xs bg-gray-700">
-                {{ category.count }}
-              </span>
-            </button>
-          </nav>
+      <!-- Filters -->
+      <div class="bg-gray-800 rounded-lg p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <FormInput
+            v-model="filters.search"
+            placeholder="Search skills..."
+            @input="handleSearch"
+          />
+
+          <FormSelect
+            v-model="filters.category"
+            placeholder="All Categories"
+            :options="categoryOptions"
+            @change="handleFilter"
+          />
+
+          <FormSelect
+            v-model="filters.level"
+            placeholder="All Levels"
+            :options="levelOptions"
+            @change="handleFilter"
+          />
         </div>
       </div>
 
-      <!-- Skills Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Skills by Category -->
+      <div
+        v-if="groupedSkills && Object.keys(groupedSkills).length > 0"
+        class="space-y-6"
+      >
         <div
-          v-for="skill in filteredSkills"
-          :key="skill.id"
-          class="bg-gray-800 rounded-lg p-6 hover:bg-gray-700/50 transition-colors"
+          v-for="(categorySkills, category) in groupedSkills"
+          :key="category"
         >
-          <!-- Skill Header -->
-          <div class="flex items-start justify-between mb-4">
-            <div class="flex items-center space-x-3">
-              <div
-                class="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
-                :style="{ backgroundColor: skill.color || '#374151' }"
-              >
-                {{ skill.icon || "🛠️" }}
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-semibold text-white">{{ category }}</h2>
+            <span class="text-gray-400 text-sm"
+              >{{ categorySkills.length }} skills</span
+            >
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div
+              v-for="skill in categorySkills"
+              :key="skill.id"
+              class="bg-gray-800 rounded-lg p-4 hover:shadow-lg transition-shadow relative group"
+            >
+              <!-- Skill Level Badge -->
+              <div class="absolute top-3 right-3">
+                <span
+                  :class="[
+                    'px-2 py-1 text-xs rounded-full',
+                    getLevelColor(skill.level),
+                  ]"
+                >
+                  {{ skill.level }}
+                </span>
               </div>
-              <div>
-                <h3 class="text-lg font-semibold text-white">
+
+              <!-- Actions Dropdown -->
+              <div
+                class="absolute top-3 right-16 opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <div class="relative">
+                  <button
+                    @click="toggleActions(skill.id)"
+                    class="p-1 bg-gray-700 rounded text-gray-400 hover:text-white"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"
+                      />
+                    </svg>
+                  </button>
+
+                  <div
+                    v-if="activeActions === skill.id"
+                    class="absolute right-0 mt-2 w-32 bg-gray-800 rounded-md shadow-lg border border-gray-700 z-10"
+                  >
+                    <div class="p-1">
+                      <Link
+                        :href="route('admin.skill.edit', skill.id)"
+                        class="flex items-center px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded"
+                      >
+                        Edit
+                      </Link>
+                      <button
+                        @click="confirmDelete(skill)"
+                        class="flex items-center w-full px-3 py-2 text-sm text-red-400 hover:bg-gray-700 rounded"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Skill Content -->
+              <div class="pr-16">
+                <h3 class="text-lg font-semibold text-white mb-2">
                   {{ skill.name }}
                 </h3>
-                <p class="text-sm text-gray-400">{{ skill.category }}</p>
+
+                <!-- Skill Level Progress -->
+                <div class="mb-3">
+                  <div class="flex justify-between text-sm text-gray-400 mb-1">
+                    <span>Proficiency</span>
+                    <span>{{ getLevelPercentage(skill.level) }}%</span>
+                  </div>
+                  <div class="w-full bg-gray-700 rounded-full h-2">
+                    <div
+                      :class="[
+                        'h-2 rounded-full transition-all duration-300',
+                        getLevelProgressColor(skill.level),
+                      ]"
+                      :style="{ width: getLevelPercentage(skill.level) + '%' }"
+                    ></div>
+                  </div>
+                </div>
+
+                <!-- Creation Date -->
+                <div class="text-xs text-gray-500">
+                  Added {{ formatDate(skill.created_at) }}
+                </div>
               </div>
             </div>
-
-            <!-- Actions -->
-            <div class="flex items-center space-x-1">
-              <Link
-                :href="route('admin.skill.edit', skill.id)"
-                class="text-blue-400 hover:text-blue-300 p-1 rounded hover:bg-blue-500/10 transition-colors"
-                title="Edit"
-              >
-                <svg
-                  class="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                  />
-                </svg>
-              </Link>
-              <button
-                @click="confirmDelete(skill)"
-                class="text-red-400 hover:text-red-300 p-1 rounded hover:bg-red-500/10 transition-colors"
-                title="Delete"
-              >
-                <svg
-                  class="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <!-- Skill Level -->
-          <div class="mb-4">
-            <div class="flex items-center justify-between text-sm mb-2">
-              <span class="text-gray-400">Proficiency</span>
-              <span class="text-white font-medium">{{
-                getSkillLevelLabel(skill.level)
-              }}</span>
-            </div>
-            <div class="w-full bg-gray-700 rounded-full h-2">
-              <div
-                class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300"
-                :style="{ width: getSkillLevelPercentage(skill.level) }"
-              ></div>
-            </div>
-          </div>
-
-          <!-- Description -->
-          <p
-            v-if="skill.description"
-            class="text-gray-300 text-sm leading-relaxed"
-          >
-            {{ skill.description }}
-          </p>
-
-          <!-- Featured Badge -->
-          <div v-if="skill.is_featured" class="mt-3">
-            <span
-              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
-            >
-              ⭐ Featured
-            </span>
           </div>
         </div>
+      </div>
 
-        <!-- Empty State -->
-        <div
-          v-if="filteredSkills.length === 0"
-          class="col-span-full text-center py-12"
+      <!-- Empty State -->
+      <div v-else class="text-center py-12">
+        <svg
+          class="mx-auto h-24 w-24 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
         >
-          <svg
-            class="mx-auto h-12 w-12 text-gray-400 mb-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-            />
-          </svg>
-          <h3 class="text-lg font-medium text-white mb-2">
-            No skills in this category
-          </h3>
-          <p class="text-gray-400 mb-4">Add your first skill to get started</p>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+          />
+        </svg>
+        <h3 class="mt-4 text-lg font-medium text-white">No skills found</h3>
+        <p class="mt-2 text-gray-400">
+          Get started by adding your first skill.
+        </p>
+        <div class="mt-6">
           <Link
             :href="route('admin.skill.create')"
-            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
           >
             Add Skill
           </Link>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div v-if="skills.total > skills.per_page" class="mt-6">
+        <div class="flex items-center justify-between">
+          <div class="text-sm text-gray-400">
+            Showing {{ skills.from }} to {{ skills.to }} of
+            {{ skills.total }} results
+          </div>
+          <div class="flex space-x-1">
+            <Link
+              v-for="link in skills.links"
+              :key="link.label"
+              :href="link.url"
+              v-html="link.label"
+              class="px-3 py-2 text-sm border border-gray-600 rounded"
+              :class="{
+                'bg-blue-600 text-white border-blue-600': link.active,
+                'text-gray-400 hover:text-white hover:border-gray-500':
+                  !link.active && link.url,
+                'text-gray-600 cursor-not-allowed': !link.url,
+              }"
+            />
+          </div>
         </div>
       </div>
 
@@ -205,77 +236,109 @@
 import { ref, computed } from "vue";
 import { Link, router } from "@inertiajs/vue3";
 import DashboardLayout from "@/Layouts/DashboardLayout.vue";
+import FormInput from "@/Components/Form/FormInput.vue";
+import FormSelect from "@/Components/Form/FormSelect.vue";
 import ConfirmDialog from "@/Components/UI/ConfirmDialog.vue";
 
 const props = defineProps({
-  skills: Array,
+  skills: Object,
+  filters: Object,
 });
 
-const activeCategory = ref("all");
 const showDeleteModal = ref(false);
 const selectedSkill = ref(null);
+const activeActions = ref(null);
 
-// Group skills by category and create filter categories
-const categories = computed(() => {
-  const categoryMap = {};
+const filters = ref({
+  search: props.filters?.search || "",
+  category: props.filters?.category || "",
+  level: props.filters?.level || "",
+});
 
-  props.skills.forEach((skill) => {
-    const category = skill.category || "Uncategorized";
-    if (!categoryMap[category]) {
-      categoryMap[category] = 0;
-    }
-    categoryMap[category]++;
-  });
-
-  const cats = [
-    { key: "all", label: "All Skills", count: props.skills.length },
+const categoryOptions = computed(() => {
+  const categories = [...new Set(props.skills.data.map((s) => s.category))];
+  return [
+    { value: "", label: "All Categories" },
+    ...categories.map((cat) => ({ value: cat, label: cat })),
   ];
+});
 
-  Object.entries(categoryMap).forEach(([category, count]) => {
-    cats.push({
-      key: category.toLowerCase().replace(/\s+/g, "_"),
-      label: category,
-      count,
-    });
+const levelOptions = ref([
+  { value: "", label: "All Levels" },
+  { value: "pemula", label: "Pemula" },
+  { value: "menengah", label: "Menengah" },
+  { value: "mahir", label: "Mahir" },
+]);
+
+const groupedSkills = computed(() => {
+  const filtered = props.skills.data.filter((skill) => {
+    const matchesSearch =
+      !filters.value.search ||
+      skill.name.toLowerCase().includes(filters.value.search.toLowerCase());
+    const matchesCategory =
+      !filters.value.category || skill.category === filters.value.category;
+    const matchesLevel =
+      !filters.value.level || skill.level === filters.value.level;
+
+    return matchesSearch && matchesCategory && matchesLevel;
   });
 
-  return cats;
+  return filtered.reduce((groups, skill) => {
+    const category = skill.category || "Other";
+    if (!groups[category]) {
+      groups[category] = [];
+    }
+    groups[category].push(skill);
+    return groups;
+  }, {});
 });
 
-const filteredSkills = computed(() => {
-  if (activeCategory.value === "all") {
-    return props.skills;
-  }
-
-  const categoryName = categories.value.find(
-    (cat) => cat.key === activeCategory.value
-  )?.label;
-  return props.skills.filter((skill) => skill.category === categoryName);
-});
-
-const getSkillLevelLabel = (level) => {
-  const levels = {
-    beginner: "Beginner",
-    intermediate: "Intermediate",
-    advanced: "Advanced",
-    expert: "Expert",
+const getLevelColor = (level) => {
+  const colors = {
+    pemula: "bg-yellow-900 text-yellow-300",
+    menengah: "bg-blue-900 text-blue-300",
+    mahir: "bg-green-900 text-green-300",
   };
-  return levels[level] || "Unknown";
+  return colors[level] || "bg-gray-900 text-gray-300";
 };
 
-const getSkillLevelPercentage = (level) => {
+const getLevelPercentage = (level) => {
   const percentages = {
-    beginner: "25%",
-    intermediate: "50%",
-    advanced: "75%",
-    expert: "100%",
+    pemula: 35,
+    menengah: 70,
+    mahir: 95,
   };
-  return percentages[level] || "0%";
+  return percentages[level] || 0;
+};
+
+const formatDate = (date) => {
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
+
+const toggleActions = (skillId) => {
+  activeActions.value = activeActions.value === skillId ? null : skillId;
+};
+
+const handleSearch = () => {
+  router.get(route("admin.skill.index"), filters.value, {
+    preserveState: true,
+  });
+};
+
+const handleFilter = () => {
+  router.get(route("admin.skill.index"), filters.value, {
+    preserveState: true,
+  });
 };
 
 const confirmDelete = (skill) => {
   selectedSkill.value = skill;
   showDeleteModal.value = true;
+  activeActions.value = null;
 };
 
 const deleteSkill = () => {

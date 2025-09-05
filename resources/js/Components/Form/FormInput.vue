@@ -1,47 +1,33 @@
-<!-- FormInput.vue -->
+// resources/js/Components/Form/FormInput.vue
 <template>
   <div class="mb-4">
-    <label
-      v-if="label"
-      :for="id"
-      class="block text-sm font-medium text-gray-300 mb-2"
-    >
+    <label v-if="label" class="block text-sm font-medium text-gray-300 mb-2">
       {{ label }}
       <span v-if="required" class="text-red-400">*</span>
     </label>
 
     <div class="relative">
       <input
-        :id="id"
         :type="type"
         :value="modelValue"
+        @input="$emit('update:modelValue', $event.target.value)"
         :placeholder="placeholder"
         :required="required"
         :disabled="disabled"
-        @input="$emit('update:modelValue', $event.target.value)"
-        class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
-        :class="{
-          'border-red-500 focus:border-red-500 focus:ring-red-500/20': hasError,
-          'opacity-50 cursor-not-allowed': disabled,
-        }"
+        :maxlength="maxLength"
+        :class="[
+          'w-full px-3 py-2 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors',
+          hasError ? 'border-red-500' : 'border-gray-600',
+          disabled ? 'opacity-50 cursor-not-allowed' : '',
+        ]"
       />
 
-      <!-- Error Icon -->
+      <!-- Character count -->
       <div
-        v-if="hasError"
-        class="absolute inset-y-0 right-0 pr-3 flex items-center"
+        v-if="maxLength && showCharCount"
+        class="absolute right-2 top-2 text-xs text-gray-400"
       >
-        <svg
-          class="h-5 w-5 text-red-400"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-            clip-rule="evenodd"
-          />
-        </svg>
+        {{ characterCount }}/{{ maxLength }}
       </div>
     </div>
 
@@ -72,10 +58,15 @@ const props = defineProps({
   disabled: Boolean,
   error: String,
   help: String,
-  id: String,
+  maxLength: Number,
+  showCharCount: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(["update:modelValue"]);
 
 const hasError = computed(() => !!props.error);
+const characterCount = computed(() => String(props.modelValue || "").length);
 </script>

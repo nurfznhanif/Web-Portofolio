@@ -1,4 +1,5 @@
 <?php
+// app/Http/Controllers/Admin/ContactMessageController.php - FIXED VERSION
 
 namespace App\Http\Controllers\Admin;
 
@@ -18,6 +19,7 @@ class ContactMessageController extends Controller
     {
         $status = $request->get('status', 'all');
         $search = $request->get('search', '');
+        $timeframe = $request->get('timeframe', 'all');
         $perPage = $request->get('per_page', 15);
         $sortBy = $request->get('sort_by', 'created_at');
         $sortOrder = $request->get('sort_order', 'desc');
@@ -34,9 +36,14 @@ class ContactMessageController extends Controller
             });
         }
 
-        // Apply status filter
+        // Apply status filter - FIXED: menggunakan method yang benar
         if ($status !== 'all') {
             $query->byStatus($status);
+        }
+
+        // Apply timeframe filter
+        if ($timeframe !== 'all') {
+            $query->inTimeframe($timeframe);
         }
 
         // Apply sorting
@@ -44,21 +51,16 @@ class ContactMessageController extends Controller
 
         $messages = $query->paginate($perPage);
 
-        // Get status counts for tabs
-        $statusCounts = [
-            'all' => ContactMessage::count(),
-            'new' => ContactMessage::unread()->count(),
-            'read' => ContactMessage::byStatus('read')->count(),
-            'replied' => ContactMessage::byStatus('replied')->count(),
-            'archived' => ContactMessage::byStatus('archived')->count(),
-        ];
+        // Get status counts for tabs - FIXED: menggunakan static method
+        $stats = ContactMessage::getStatusCounts();
 
-        return Inertia::render('Admin/ContactMessages/Index', [
+        return Inertia::render('Admin/Messages/Index', [
             'messages' => $messages,
-            'statusCounts' => $statusCounts,
+            'stats' => $stats,
             'filters' => [
                 'status' => $status,
                 'search' => $search,
+                'timeframe' => $timeframe,
                 'per_page' => $perPage,
                 'sort_by' => $sortBy,
                 'sort_order' => $sortOrder
@@ -76,8 +78,12 @@ class ContactMessageController extends Controller
             $message->markAsRead();
         }
 
-        return Inertia::render('Admin/ContactMessages/Show', [
-            'message' => $message
+        return Inertia::render('Admin/Messages/Show', [
+            'message' => $message,
+            'messageStats' => [
+                'response_time' => $this->calculateResponseTime($message),
+                'reply_count' => $this->getReplyCount($message)
+            ]
         ]);
     }
 
@@ -115,8 +121,7 @@ class ContactMessageController extends Controller
     public function reply(Request $request, ContactMessage $message)
     {
         $validator = Validator::make($request->all(), [
-            'subject' => 'required|string|max:255',
-            'reply_message' => 'required|string|max:5000',
+            'message' => 'required|string|max:5000',
             'mark_as_replied' => 'boolean'
         ]);
 
@@ -126,20 +131,16 @@ class ContactMessageController extends Controller
 
         try {
             $validated = $validator->validated();
+            $replyMessage = $validated['message'];
 
             // Here you would implement the actual email sending
             // For now, we'll simulate it
-            $this->sendReplyEmail($message, $validated);
+            $this->sendReplyEmail($message, $replyMessage);
 
             // Update message status
             if ($request->boolean('mark_as_replied', true)) {
-                $message->markAsReplied();
+                $message->markAsReplied($replyMessage);
             }
-
-            // Add admin notes
-            $adminNotes = $message->admin_notes ?? '';
-            $adminNotes .= "\n\n[" . now()->format('Y-m-d H:i:s') . "] Replied: " . $validated['subject'];
-            $message->update(['admin_notes' => $adminNotes]);
 
             return response()->json([
                 'success' => true,
@@ -173,7 +174,7 @@ class ContactMessageController extends Controller
     public function bulkActions(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'action' => 'required|string|in:mark_read,mark_replied,archive,delete',
+            'action' => 'required|string|in:mark-read,mark-replied,archive,delete',
             'message_ids' => 'required|array|min:1',
             'message_ids.*' => 'exists:contact_messages,id'
         ]);
@@ -188,14 +189,14 @@ class ContactMessageController extends Controller
             $count = 0;
 
             switch ($action) {
-                case 'mark_read':
+                case 'mark-read':
                     $count = ContactMessage::whereIn('id', $messageIds)->update([
                         'status' => 'read',
                         'read_at' => now()
                     ]);
                     break;
 
-                case 'mark_replied':
+                case 'mark-replied':
                     $count = ContactMessage::whereIn('id', $messageIds)->update([
                         'status' => 'replied',
                         'replied_at' => now()
@@ -274,6 +275,48 @@ class ContactMessageController extends Controller
             ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 
+    // ==========================================
+    // PRIVATE HELPER METHODS
+    // ==========================================
+
+    /**
+     * Send reply email (placeholder)
+     */
+    private function sendReplyEmail(ContactMessage $message, string $replyMessage)
+    {
+        // TODO: Implement actual email sending
+        // For now, just log it
+        \Log::info("Reply sent to {$message->email}: {$replyMessage}");
+    }
+
+    /**
+     * Calculate response time
+     */
+    private function calculateResponseTime(ContactMessage $message)
+    {
+        if (!$message->replied_at) {
+            return null;
+        }
+
+        $hours = $message->created_at->diffInHours($message->replied_at);
+
+        if ($hours < 24) {
+            return "{$hours} hours";
+        } else {
+            $days = $message->created_at->diffInDays($message->replied_at);
+            return "{$days} days";
+        }
+    }
+
+    /**
+     * Get reply count (placeholder)
+     */
+    private function getReplyCount(ContactMessage $message)
+    {
+        // For now, return 1 if replied, 0 if not
+        return $message->status === 'replied' ? 1 : 0;
+    }
+
     /**
      * Export messages as CSV
      */
@@ -315,9 +358,9 @@ class ContactMessageController extends Controller
                     $message->status,
                     $message->ip_address,
                     $message->country,
-                    $message->created_at->format('Y-m-d H:i:s'),
-                    $message->read_at?->format('Y-m-d H:i:s'),
-                    $message->replied_at?->format('Y-m-d H:i:s'),
+                    $message->created_at->toDateTimeString(),
+                    $message->read_at?->toDateTimeString(),
+                    $message->replied_at?->toDateTimeString(),
                 ]);
             }
 
@@ -325,46 +368,5 @@ class ContactMessageController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
-    }
-
-    /**
-     * Send reply email (implement based on your email service)
-     */
-    private function sendReplyEmail(ContactMessage $message, array $replyData)
-    {
-        // This is where you would implement actual email sending
-        // You can use Laravel's Mail facade or any email service
-
-        try {
-            // Example using Laravel Mail (you need to configure mail settings)
-            /*
-            Mail::send('emails.contact-reply', [
-                'originalMessage' => $message,
-                'replyContent' => $replyData['reply_message']
-            ], function($mail) use ($message, $replyData) {
-                $mail->to($message->email, $message->name)
-                     ->subject($replyData['subject'])
-                     ->from(config('mail.from.address'), config('mail.from.name'));
-            });
-            */
-
-            // For now, we'll just log it
-            \Log::info('Contact reply sent', [
-                'to' => $message->email,
-                'subject' => $replyData['subject'],
-                'original_message_id' => $message->id,
-                'reply_content_length' => strlen($replyData['reply_message'])
-            ]);
-
-            return true;
-        } catch (\Exception $e) {
-            \Log::error('Failed to send contact reply', [
-                'error' => $e->getMessage(),
-                'message_id' => $message->id,
-                'to' => $message->email
-            ]);
-
-            throw $e;
-        }
     }
 }

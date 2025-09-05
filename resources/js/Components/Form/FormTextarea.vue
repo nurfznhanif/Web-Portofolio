@@ -1,35 +1,31 @@
-<!-- FormTextarea.vue -->
+// resources/js/Components/Form/FormTextarea.vue
 <template>
   <div class="mb-4">
-    <label
-      v-if="label"
-      :for="id"
-      class="block text-sm font-medium text-gray-300 mb-2"
-    >
+    <label v-if="label" class="block text-sm font-medium text-gray-300 mb-2">
       {{ label }}
       <span v-if="required" class="text-red-400">*</span>
     </label>
 
     <div class="relative">
       <textarea
-        :id="id"
         :value="modelValue"
+        @input="$emit('update:modelValue', $event.target.value)"
         :placeholder="placeholder"
         :required="required"
         :disabled="disabled"
         :rows="rows"
-        @input="handleInput"
-        class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"
-        :class="{
-          'border-red-500 focus:border-red-500 focus:ring-red-500/20': hasError,
-          'opacity-50 cursor-not-allowed': disabled,
-        }"
+        :maxlength="maxLength"
+        :class="[
+          'w-full px-3 py-2 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-vertical',
+          hasError ? 'border-red-500' : 'border-gray-600',
+          disabled ? 'opacity-50 cursor-not-allowed' : '',
+        ]"
       ></textarea>
 
-      <!-- Character Count -->
+      <!-- Character count -->
       <div
         v-if="maxLength"
-        class="absolute bottom-3 right-3 text-xs text-gray-400"
+        class="absolute right-2 bottom-2 text-xs text-gray-400 bg-gray-700 px-1 rounded"
       >
         {{ characterCount }}/{{ maxLength }}
       </div>
@@ -58,10 +54,9 @@ const props = defineProps({
   disabled: Boolean,
   error: String,
   help: String,
-  id: String,
   rows: {
     type: Number,
-    default: 4,
+    default: 3,
   },
   maxLength: Number,
 });
@@ -69,13 +64,5 @@ const props = defineProps({
 const emit = defineEmits(["update:modelValue"]);
 
 const hasError = computed(() => !!props.error);
-const characterCount = computed(() => props.modelValue?.length || 0);
-
-const handleInput = (event) => {
-  const value = event.target.value;
-  if (props.maxLength && value.length > props.maxLength) {
-    return;
-  }
-  emit("update:modelValue", value);
-};
+const characterCount = computed(() => String(props.modelValue || "").length);
 </script>

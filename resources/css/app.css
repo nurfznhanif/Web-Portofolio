@@ -1248,3 +1248,149 @@ select:focus {
 ::-webkit-scrollbar-thumb:hover {
     background: #9ca3af;
 }
+
+/* Custom scrollbar untuk dark theme */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-500;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Loading states */
+.loading {
+    @apply animate-pulse;
+}
+
+/* Form focus states */
+.form-input:focus {
+    @apply ring-2 ring-blue-500 ring-opacity-50;
+}
+
+/* Custom transitions */
+.transition-all {
+    transition: all 0.3s ease;
+}
+
+/* Responsive text utilities */
+@responsive {
+    .text-responsive-xs {
+        font-size: clamp(0.75rem, 2vw, 0.875rem);
+    }
+    .text-responsive-sm {
+        font-size: clamp(0.875rem, 2.5vw, 1rem);
+    }
+    .text-responsive-base {
+        font-size: clamp(1rem, 3vw, 1.125rem);
+    }
+    .text-responsive-lg {
+        font-size: clamp(1.125rem, 3.5vw, 1.25rem);
+    }
+    .text-responsive-xl {
+        font-size: clamp(1.25rem, 4vw, 1.5rem);
+    }
+}
+
+/* Dark theme improvements */
+body {
+    @apply bg-gray-900 text-white;
+}
+
+/* Card hover effects */
+.card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:scale-105;
+}
+
+/* Status badges */
+.badge-new {
+    @apply bg-blue-900 text-blue-300 ring-1 ring-blue-400;
+}
+
+.badge-read {
+    @apply bg-gray-900 text-gray-300 ring-1 ring-gray-400;
+}
+
+.badge-replied {
+    @apply bg-green-900 text-green-300 ring-1 ring-green-400;
+}
+
+/* Skill level indicators */
+.skill-level-pemula {
+    @apply bg-yellow-500;
+}
+
+.skill-level-menengah {
+    @apply bg-blue-500;
+}
+
+.skill-level-mahir {
+    @apply bg-green-500;
+}
+
+/* File upload area */
+.upload-area {
+    @apply border-2 border-dashed border-gray-600 rounded-lg transition-colors;
+}
+
+.upload-area:hover {
+    @apply border-blue-500 bg-blue-500 bg-opacity-5;
+}
+
+.upload-area.dragover {
+    @apply border-blue-500 bg-blue-500 bg-opacity-10;
+}
+
+/* Navigation active states */
+.nav-active {
+    @apply bg-gray-700 text-white;
+}
+
+.nav-inactive {
+    @apply text-gray-300 hover:bg-gray-700 hover:text-white;
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+    @apply fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity;
+}
+
+/* Loading spinner */
+.spinner {
+    @apply inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin;
+}
+
+/* Print styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        @apply bg-white text-black;
+    }
+}

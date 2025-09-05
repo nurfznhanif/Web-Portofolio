@@ -1,404 +1,141 @@
+<!-- resources/js/Layouts/DashboardLayout.vue - SAFE VERSION -->
 <template>
   <div class="min-h-screen bg-gray-900">
-    <!-- Sidebar -->
-    <div
-      class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 transform transition-transform duration-300 ease-in-out lg:translate-x-0"
-      :class="{
-        '-translate-x-full': !sidebarOpen,
-        'translate-x-0': sidebarOpen,
-      }"
-    >
-      <div class="flex flex-col h-full">
-        <!-- Logo -->
-        <div class="flex items-center justify-center h-16 bg-red-900">
-          <h1 class="text-xl font-bold text-white">Admin Dashboard</h1>
-        </div>
-
-        <!-- Navigation -->
-        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-          <!-- Dashboard -->
-          <Link
-            :href="route('admin.dashboard')"
-            class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors"
-            :class="{
-              'bg-red-900 text-white':
-                $page.url.startsWith('/admin/dashboard') ||
-                $page.url === '/dashboard',
-            }"
-          >
-            <span class="mr-3">📊</span>
-            Dashboard
-          </Link>
-
-          <!-- Content Management Section -->
-          <div class="pt-4">
-            <h3
-              class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2"
+    <!-- Top Navigation -->
+    <nav class="bg-gray-800 border-b border-gray-700 sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <!-- Left side -->
+          <div class="flex items-center">
+            <!-- Mobile menu button -->
+            <button
+              @click="sidebarOpen = !sidebarOpen"
+              class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
             >
-              Content Management
-            </h3>
-
-            <!-- Portfolio -->
-            <Link
-              :href="route('admin.portfolio.index')"
-              class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors"
-              :class="{
-                'bg-red-900 text-white':
-                  $page.url.startsWith('/admin/portfolio'),
-              }"
-            >
-              <span class="mr-3">💼</span>
-              Portfolio
-              <span
-                v-if="portfolioCount"
-                class="ml-auto text-xs bg-gray-600 text-gray-300 px-2 py-0.5 rounded-full"
-              >
-                {{ portfolioCount }}
-              </span>
-            </Link>
-
-            <!-- Experience -->
-            <Link
-              :href="route('admin.experience.index')"
-              class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors"
-              :class="{
-                'bg-red-900 text-white':
-                  $page.url.startsWith('/admin/experience'),
-              }"
-            >
-              <span class="mr-3">🏢</span>
-              Experience
-              <span
-                v-if="experienceCount"
-                class="ml-auto text-xs bg-gray-600 text-gray-300 px-2 py-0.5 rounded-full"
-              >
-                {{ experienceCount }}
-              </span>
-            </Link>
-
-            <!-- Skills -->
-            <Link
-              :href="route('admin.skill.index')"
-              class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors"
-              :class="{
-                'bg-red-900 text-white': $page.url.startsWith('/admin/skill'),
-              }"
-            >
-              <span class="mr-3">🛠️</span>
-              Skills
-              <span
-                v-if="skillsCount"
-                class="ml-auto text-xs bg-gray-600 text-gray-300 px-2 py-0.5 rounded-full"
-              >
-                {{ skillsCount }}
-              </span>
-            </Link>
-
-            <!-- Certifications -->
-            <Link
-              :href="route('admin.certifications.index')"
-              class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors"
-              :class="{
-                'bg-red-900 text-white': $page.url.startsWith(
-                  '/admin/certifications'
-                ),
-              }"
-            >
-              <span class="mr-3">🏆</span>
-              Certifications
-            </Link>
-
-            <!-- Achievements -->
-            <Link
-              :href="route('admin.achievements.index')"
-              class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors"
-              :class="{
-                'bg-red-900 text-white': $page.url.startsWith(
-                  '/admin/achievements'
-                ),
-              }"
-            >
-              <span class="mr-3">🎯</span>
-              Achievements
-            </Link>
-          </div>
-
-          <!-- Profile Section -->
-          <div class="pt-4">
-            <h3
-              class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2"
-            >
-              Profile Settings
-            </h3>
-
-            <!-- Profile Settings -->
-            <Link
-              :href="route('admin.settings.index')"
-              class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors"
-              :class="{
-                'bg-red-900 text-white':
-                  $page.url.startsWith('/admin/settings'),
-              }"
-            >
-              <span class="mr-3">⚙️</span>
-              Settings
-            </Link>
-
-            <!-- Social Links -->
-            <Link
-              :href="route('admin.social-links.index')"
-              class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors"
-              :class="{
-                'bg-red-900 text-white': $page.url.startsWith(
-                  '/admin/social-links'
-                ),
-              }"
-            >
-              <span class="mr-3">🔗</span>
-              Social Links
-            </Link>
-
-            <!-- Languages -->
-            <Link
-              :href="route('admin.languages.index')"
-              class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors"
-              :class="{
-                'bg-red-900 text-white':
-                  $page.url.startsWith('/admin/languages'),
-              }"
-            >
-              <span class="mr-3">🗣️</span>
-              Languages
-            </Link>
-
-            <!-- Interests -->
-            <Link
-              :href="route('admin.interests.index')"
-              class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors"
-              :class="{
-                'bg-red-900 text-white':
-                  $page.url.startsWith('/admin/interests'),
-              }"
-            >
-              <span class="mr-3">💡</span>
-              Interests
-            </Link>
-          </div>
-
-          <!-- Communication Section -->
-          <div class="pt-4">
-            <h3
-              class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2"
-            >
-              Communication
-            </h3>
-
-            <!-- Messages -->
-            <Link
-              :href="route('admin.messages.index')"
-              class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors"
-              :class="{
-                'bg-red-900 text-white':
-                  $page.url.startsWith('/admin/messages'),
-              }"
-            >
-              <span class="mr-3">💬</span>
-              Messages
-              <span
-                v-if="unreadMessages > 0"
-                class="ml-auto text-xs bg-red-500 text-white px-2 py-0.5 rounded-full animate-pulse"
-              >
-                {{ unreadMessages }}
-              </span>
-            </Link>
-          </div>
-
-          <!-- Analytics Section -->
-          <div class="pt-4">
-            <h3
-              class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2"
-            >
-              Analytics & Reports
-            </h3>
-
-            <!-- Analytics Dashboard -->
-            <Link
-              :href="route('admin.analytics.index')"
-              class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors"
-              :class="{
-                'bg-red-900 text-white':
-                  $page.url.startsWith('/admin/analytics'),
-              }"
-            >
-              <span class="mr-3">📈</span>
-              Analytics
-            </Link>
-
-            <!-- System Management -->
-            <Link
-              :href="route('admin.system.index')"
-              class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors"
-              :class="{
-                'bg-red-900 text-white': $page.url.startsWith('/admin/system'),
-              }"
-            >
-              <span class="mr-3">🔧</span>
-              System
-            </Link>
-          </div>
-
-          <!-- Quick Actions -->
-          <div class="pt-4">
-            <hr class="border-gray-700 mb-4" />
-
-            <!-- View Website -->
-            <a
-              :href="route('portfolio.index')"
-              target="_blank"
-              class="flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors"
-            >
-              <span class="mr-3">🌐</span>
-              View Website
               <svg
-                class="w-4 h-4 ml-auto"
-                fill="none"
+                class="h-6 w-6"
                 stroke="currentColor"
+                fill="none"
                 viewBox="0 0 24 24"
               >
                 <path
+                  :class="{ hidden: sidebarOpen, 'inline-flex': !sidebarOpen }"
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+                <path
+                  :class="{ hidden: !sidebarOpen, 'inline-flex': sidebarOpen }"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
-            </a>
-
-            <!-- Clear Cache -->
-            <button
-              @click="clearCache"
-              :disabled="clearingCache"
-              class="w-full flex items-center px-4 py-2 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors disabled:opacity-50"
-            >
-              <span class="mr-3" :class="{ 'animate-spin': clearingCache }"
-                >🗑️</span
-              >
-              Clear Cache
             </button>
+
+            <!-- Logo -->
+            <div class="flex-shrink-0 flex items-center ml-4 md:ml-0">
+              <Link
+                :href="route('dashboard')"
+                class="text-xl font-bold text-white"
+              >
+                Portfolio Admin
+              </Link>
+            </div>
           </div>
-        </nav>
 
-        <!-- User Menu -->
-        <div class="p-4 border-t border-gray-700">
-          <div class="flex items-center">
-            <!-- User Avatar -->
-            <div
-              class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center mr-3"
-            >
-              <span class="text-white text-sm font-bold">
-                {{ $page.props.auth.user.name.charAt(0).toUpperCase() }}
-              </span>
-            </div>
-
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-medium text-white truncate">
-                {{ $page.props.auth.user.name }}
-              </p>
-              <p class="text-xs text-gray-400 truncate">
-                {{ $page.props.auth.user.email }}
-              </p>
-            </div>
-
-            <!-- User Menu Dropdown -->
+          <!-- Right side -->
+          <div class="flex items-center space-x-4">
+            <!-- User menu -->
             <div class="relative">
               <button
                 @click="showUserMenu = !showUserMenu"
-                class="p-2 text-gray-400 hover:text-white rounded-lg transition-colors"
+                class="flex items-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700"
               >
+                <div
+                  class="h-8 w-8 bg-gray-600 rounded-full flex items-center justify-center"
+                >
+                  <span class="text-sm text-white">{{ userInitials }}</span>
+                </div>
                 <svg
-                  class="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+                  class="ml-2 h-4 w-4"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                    fill-rule="evenodd"
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
                   />
                 </svg>
               </button>
 
-              <!-- Dropdown Menu -->
+              <!-- User menu dropdown -->
               <div
                 v-if="showUserMenu"
-                class="absolute right-0 bottom-full mb-2 w-48 bg-gray-700 rounded-lg shadow-lg border border-gray-600"
+                class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg border border-gray-700 z-50"
               >
-                <div class="py-1">
+                <div class="p-2">
+                  <div
+                    class="px-3 py-2 text-sm text-gray-300 border-b border-gray-700"
+                  >
+                    {{ userName }}
+                  </div>
                   <Link
                     :href="route('profile.edit')"
-                    class="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white"
-                    @click="showUserMenu = false"
+                    class="block px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded"
                   >
-                    <svg
-                      class="w-4 h-4 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      />
-                    </svg>
-                    Edit Profile
+                    Profile Settings
                   </Link>
-
-                  <hr class="border-gray-600 my-1" />
-
-                  <button
-                    @click="logout"
-                    class="w-full flex items-center px-4 py-2 text-sm text-red-400 hover:bg-gray-600 hover:text-red-300"
+                  <Link
+                    href="/"
+                    class="block px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded"
                   >
-                    <svg
-                      class="w-4 h-4 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                      />
-                    </svg>
-                    Logout
-                  </button>
+                    View Portfolio
+                  </Link>
+                  <Link
+                    :href="route('logout')"
+                    method="post"
+                    as="button"
+                    class="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded"
+                  >
+                    Sign out
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </nav>
 
-    <!-- Main Content -->
-    <div class="lg:pl-64">
-      <!-- Top Navigation -->
-      <div class="sticky top-0 z-40 bg-gray-800 border-b border-gray-700">
-        <div class="flex items-center justify-between px-4 py-3">
-          <div class="flex items-center">
-            <!-- Mobile Menu Button -->
-            <button
-              @click="toggleSidebar"
-              class="lg:hidden p-2 text-gray-400 hover:text-white rounded-lg mr-3"
+    <div class="flex">
+      <!-- Sidebar -->
+      <div
+        :class="{
+          'translate-x-0': sidebarOpen,
+          '-translate-x-full': !sidebarOpen,
+        }"
+        class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:inset-0"
+      >
+        <!-- Sidebar content -->
+        <div class="flex flex-col h-full pt-16 md:pt-0">
+          <!-- Navigation -->
+          <nav class="flex-1 px-2 py-4 space-y-2">
+            <!-- Dashboard -->
+            <Link
+              :href="route('dashboard')"
+              :class="[
+                'flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                isCurrentRoute('dashboard')
+                  ? 'bg-gray-700 text-white'
+                  : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+              ]"
             >
               <svg
-                class="w-6 h-6"
+                class="mr-3 h-5 w-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -407,48 +144,201 @@
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                ></path>
-              </svg>
-            </button>
-
-            <!-- Page Title -->
-            <h2 class="text-xl font-semibold text-white">{{ title }}</h2>
-          </div>
-
-          <!-- Top Navigation Actions -->
-          <div class="flex items-center space-x-4">
-            <!-- Search (Optional) -->
-            <div class="relative hidden md:block">
-              <input
-                v-model="searchQuery"
-                @input="performSearch"
-                type="text"
-                placeholder="Search..."
-                class="w-64 px-4 py-2 pl-10 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-              />
-              <svg
-                class="absolute left-3 top-2.5 w-4 h-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+                  d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"
+                />
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  d="M8 5a2 2 0 012-2h4a2 2 0 012 2v.01M8 5v.01"
                 />
               </svg>
+              Dashboard
+            </Link>
+
+            <!-- Portfolio -->
+            <div>
+              <button
+                @click="portfolioOpen = !portfolioOpen"
+                class="w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+              >
+                <div class="flex items-center">
+                  <svg
+                    class="mr-3 h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                    />
+                  </svg>
+                  Portfolio
+                </div>
+                <svg
+                  :class="{ 'rotate-90': portfolioOpen }"
+                  class="h-4 w-4 transition-transform"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+
+              <div v-show="portfolioOpen" class="pl-6 mt-2 space-y-1">
+                <Link
+                  :href="route('admin.portfolio.index')"
+                  :class="[
+                    'block px-3 py-2 text-sm rounded-md transition-colors',
+                    isCurrentRoute('admin.portfolio')
+                      ? 'bg-gray-700 text-white'
+                      : 'text-gray-400 hover:text-white hover:bg-gray-700',
+                  ]"
+                >
+                  Manage Projects
+                </Link>
+                <Link
+                  :href="route('admin.portfolio.create')"
+                  class="block px-3 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-700 rounded-md"
+                >
+                  Add New Project
+                </Link>
+              </div>
             </div>
 
-            <!-- Notifications -->
-            <button
-              @click="showNotifications = !showNotifications"
-              class="relative p-2 text-gray-400 hover:text-white rounded-lg transition-colors"
+            <!-- Experience -->
+            <div>
+              <button
+                @click="experienceOpen = !experienceOpen"
+                class="w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+              >
+                <div class="flex items-center">
+                  <svg
+                    class="mr-3 h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 00-2 2H10a2 2 0 00-2-2V6m8 0H8m8 0v6"
+                    />
+                  </svg>
+                  Experience
+                </div>
+                <svg
+                  :class="{ 'rotate-90': experienceOpen }"
+                  class="h-4 w-4 transition-transform"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+
+              <div v-show="experienceOpen" class="pl-6 mt-2 space-y-1">
+                <Link
+                  :href="route('admin.experience.index')"
+                  :class="[
+                    'block px-3 py-2 text-sm rounded-md transition-colors',
+                    isCurrentRoute('admin.experience')
+                      ? 'bg-gray-700 text-white'
+                      : 'text-gray-400 hover:text-white hover:bg-gray-700',
+                  ]"
+                >
+                  Manage Experience
+                </Link>
+                <Link
+                  :href="route('admin.experience.create')"
+                  class="block px-3 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-700 rounded-md"
+                >
+                  Add Experience
+                </Link>
+              </div>
+            </div>
+
+            <!-- Skills -->
+            <div>
+              <button
+                @click="skillsOpen = !skillsOpen"
+                class="w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+              >
+                <div class="flex items-center">
+                  <svg
+                    class="mr-3 h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                    />
+                  </svg>
+                  Skills
+                </div>
+                <svg
+                  :class="{ 'rotate-90': skillsOpen }"
+                  class="h-4 w-4 transition-transform"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+
+              <div v-show="skillsOpen" class="pl-6 mt-2 space-y-1">
+                <Link
+                  :href="route('admin.skill.index')"
+                  :class="[
+                    'block px-3 py-2 text-sm rounded-md transition-colors',
+                    isCurrentRoute('admin.skill')
+                      ? 'bg-gray-700 text-white'
+                      : 'text-gray-400 hover:text-white hover:bg-gray-700',
+                  ]"
+                >
+                  Manage Skills
+                </Link>
+                <Link
+                  :href="route('admin.skill.create')"
+                  class="block px-3 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-700 rounded-md"
+                >
+                  Add Skill
+                </Link>
+              </div>
+            </div>
+
+            <!-- Messages -->
+            <Link
+              :href="route('admin.messages.index')"
+              :class="[
+                'flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors relative',
+                isCurrentRoute('admin.messages')
+                  ? 'bg-gray-700 text-white'
+                  : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+              ]"
             >
               <svg
-                class="w-6 h-6"
+                class="mr-3 h-5 w-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -457,206 +347,152 @@
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                  d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-4m-4 0H8m-4 0h4m0 0V9a1 1 0 011-1h2a1 1 0 011 1v4M7 7h10"
                 />
               </svg>
-              <span
-                v-if="unreadMessages > 0"
-                class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center"
+              Messages
+            </Link>
+
+            <!-- Analytics -->
+            <Link
+              :href="route('admin.analytics.index')"
+              :class="[
+                'flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                isCurrentRoute('admin.analytics')
+                  ? 'bg-gray-700 text-white'
+                  : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+              ]"
+            >
+              <svg
+                class="mr-3 h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                {{ unreadMessages > 9 ? "9+" : unreadMessages }}
-              </span>
-            </button>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                />
+              </svg>
+              Analytics
+            </Link>
+          </nav>
+
+          <!-- Footer -->
+          <div class="p-4 border-t border-gray-700">
+            <div class="text-xs text-gray-400 text-center">
+              Portfolio Admin v1.0
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Page Content -->
-      <main>
-        <!-- Flash Messages -->
+      <!-- Main content -->
+      <div class="flex-1 md:ml-0">
+        <!-- Overlay for mobile -->
         <div
-          v-if="$page.props.flash?.success"
-          class="m-6 p-4 bg-green-900/50 border border-green-700 text-green-300 rounded-lg flex items-center"
-        >
-          <svg
-            class="w-5 h-5 mr-3"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          {{ $page.props.flash.success }}
-        </div>
+          v-if="sidebarOpen"
+          @click="sidebarOpen = false"
+          class="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 md:hidden"
+        ></div>
 
-        <div
-          v-if="$page.props.flash?.error"
-          class="m-6 p-4 bg-red-900/50 border border-red-700 text-red-300 rounded-lg flex items-center"
-        >
-          <svg
-            class="w-5 h-5 mr-3"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          {{ $page.props.flash.error }}
-        </div>
-
-        <slot />
-      </main>
+        <!-- Page content -->
+        <main class="flex-1">
+          <slot />
+        </main>
+      </div>
     </div>
-
-    <!-- Mobile Sidebar Overlay -->
-    <div
-      v-if="sidebarOpen"
-      class="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
-      @click="closeSidebar"
-    ></div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
-import { Link, router } from "@inertiajs/vue3";
+import { ref, computed, onMounted, onUnmounted } from "vue";
+import { Link, usePage } from "@inertiajs/vue3";
+import { useRoute } from "@/composables/useRoute";
 
-defineProps({
-  title: {
-    type: String,
-    default: "Dashboard",
-  },
-});
+// Get page data from Inertia
+const page = usePage();
 
-// Reactive state
+// Get route helper
+const route = useRoute();
+
+// Reactive data
 const sidebarOpen = ref(false);
 const showUserMenu = ref(false);
-const showNotifications = ref(false);
-const clearingCache = ref(false);
-const searchQuery = ref("");
+const portfolioOpen = ref(true);
+const experienceOpen = ref(false);
+const skillsOpen = ref(false);
 
-// Stats counters
-const portfolioCount = ref(0);
-const experienceCount = ref(0);
-const skillsCount = ref(0);
-const unreadMessages = ref(0);
-
-// Methods
-const toggleSidebar = () => {
-  sidebarOpen.value = !sidebarOpen.value;
-};
-
-const closeSidebar = () => {
-  sidebarOpen.value = false;
-};
-
-const logout = () => {
-  router.post(route("logout"));
-};
-
-const clearCache = async () => {
-  clearingCache.value = true;
+// Computed properties with safe fallbacks
+const userName = computed(() => {
   try {
-    await router.post("/admin/system/clear-cache");
-    // Show success message
+    return page.props.auth?.user?.name || "Admin User";
   } catch (error) {
-    console.error("Failed to clear cache:", error);
-  } finally {
-    clearingCache.value = false;
+    console.warn("Failed to get user name:", error);
+    return "Admin User";
   }
-};
+});
 
-const performSearch = () => {
-  // Implement search functionality
-  if (searchQuery.value.length >= 2) {
-    // Perform search API call
-    console.log("Searching for:", searchQuery.value);
-  }
-};
-
-const loadStats = async () => {
+const userInitials = computed(() => {
   try {
-    const response = await fetch("/admin/api/quick-stats");
-    const data = await response.json();
-
-    portfolioCount.value = data.portfolios || 0;
-    experienceCount.value = data.experiences || 0;
-    skillsCount.value = data.skills || 0;
-    unreadMessages.value = data.messages || 0;
+    const name = userName.value;
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
   } catch (error) {
-    console.error("Failed to load stats:", error);
+    console.warn("Failed to generate user initials:", error);
+    return "AU";
+  }
+});
+
+// Safe route checking method
+const isCurrentRoute = (routePattern) => {
+  try {
+    const currentPath = window.location.pathname;
+
+    // Simple pattern matching
+    if (routePattern === "dashboard") {
+      return currentPath === "/dashboard";
+    }
+    if (routePattern === "admin.portfolio") {
+      return currentPath.startsWith("/admin/portfolio");
+    }
+    if (routePattern === "admin.experience") {
+      return currentPath.startsWith("/admin/experience");
+    }
+    if (routePattern === "admin.skill") {
+      return currentPath.startsWith("/admin/skill");
+    }
+    if (routePattern === "admin.messages") {
+      return currentPath.startsWith("/admin/messages");
+    }
+    if (routePattern === "admin.analytics") {
+      return currentPath.startsWith("/admin/analytics");
+    }
+
+    return false;
+  } catch (error) {
+    console.warn("Route checking failed:", error);
+    return false;
   }
 };
 
-// Close dropdowns when clicking outside
 const handleClickOutside = (event) => {
-  if (!event.target.closest(".relative")) {
+  if (!event.target.closest(".user-menu-dropdown")) {
     showUserMenu.value = false;
-    showNotifications.value = false;
   }
 };
 
 // Lifecycle
 onMounted(() => {
-  loadStats();
   document.addEventListener("click", handleClickOutside);
-
-  // Refresh stats every 5 minutes
-  const statsInterval = setInterval(loadStats, 300000);
 
   onUnmounted(() => {
     document.removeEventListener("click", handleClickOutside);
-    clearInterval(statsInterval);
   });
 });
 </script>
-
-<style scoped>
-/* Smooth transitions */
-.transition-all {
-  transition: all 0.3s ease;
-}
-
-/* Custom scrollbar for sidebar */
-nav::-webkit-scrollbar {
-  width: 4px;
-}
-
-nav::-webkit-scrollbar-track {
-  background: #374151;
-}
-
-nav::-webkit-scrollbar-thumb {
-  background: #6b7280;
-  border-radius: 2px;
-}
-
-nav::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
-
-/* Animation for counters */
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-</style>
