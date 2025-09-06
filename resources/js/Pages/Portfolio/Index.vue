@@ -1151,7 +1151,15 @@ const navItems = ref([
 
 // Computed properties
 const profilePhoto = computed(() => {
-  return props.profile.photo || props.profile.avatar || "/images/poto1.png";
+  // Cek apakah ada foto dari database
+  if (props.profile.photo) {
+    return `/storage/${props.profile.photo}`;
+  }
+  if (props.profile.avatar) {
+    return props.profile.avatar;
+  }
+  // Gunakan foto yang sudah ada di public/images/poto1.png
+  return "/images/poto1.png";
 });
 
 const dynamicStats = computed(() => [
@@ -1340,8 +1348,17 @@ const getCategoryIcon = (category) => {
 };
 
 const handleImageError = (event) => {
-  console.warn("Image failed to load");
-  event.target.style.display = "none";
+  console.warn("Image failed to load, trying fallback");
+  // Fallback ke foto yang pasti ada
+  if (event.target.src !== "/images/poto1.png") {
+    event.target.src = "/images/poto1.png";
+  } else {
+    // Jika foto utama juga gagal, gunakan placeholder online
+    event.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      props.profile.name || "NH"
+    )}&size=400&background=3b82f6&color=ffffff&bold=true`;
+  }
+  event.target.style.display = "block";
 };
 
 const scrollToTop = () => {
@@ -1556,239 +1573,3 @@ window.addEventListener("error", (event) => {
   }
 });
 </script>
-
-<style scoped>
-/* Enhanced styles for dynamic portfolio */
-.modern-bg {
-  background: linear-gradient(
-    135deg,
-    #0f0f23 0%,
-    #1a0b2e 25%,
-    #16213e 50%,
-    #0f3460 75%,
-    #0e4b82 100%
-  );
-  background-attachment: fixed;
-  position: relative;
-  min-height: 100vh;
-}
-
-.modern-bg::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(
-      circle at 20% 20%,
-      rgba(59, 130, 246, 0.1) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 80% 80%,
-      rgba(147, 51, 234, 0.1) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 40% 60%,
-      rgba(236, 72, 153, 0.05) 0%,
-      transparent 50%
-    );
-  pointer-events: none;
-  z-index: -1;
-  animation: backgroundShift 20s ease-in-out infinite;
-}
-
-@keyframes backgroundShift {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.8;
-  }
-}
-
-.glassmorphism {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.glass-card {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.glass-card:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(59, 130, 246, 0.3);
-  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.3);
-}
-
-.modern-btn-primary {
-  @apply px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-2xl;
-  @apply hover:from-blue-600 hover:to-purple-700 transform hover:scale-105;
-  @apply transition-all duration-300 shadow-lg hover:shadow-xl;
-  @apply flex items-center justify-center space-x-2;
-}
-
-.modern-btn-secondary {
-  @apply px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white font-semibold rounded-2xl;
-  @apply hover:bg-white/20 hover:border-white/30 transform hover:scale-105;
-  @apply transition-all duration-300;
-  @apply flex items-center justify-center space-x-2;
-}
-
-.section-title {
-  @apply text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4;
-  background: linear-gradient(135deg, #ffffff 0%, #3b82f6 50%, #9333ea 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-size: 200% 200%;
-  animation: gradientShift 8s ease infinite;
-}
-
-@keyframes gradientShift {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-.section-subtitle {
-  @apply text-lg text-gray-400 max-w-2xl mx-auto;
-}
-
-.nav-link {
-  position: relative;
-  padding: 0.5rem 0;
-}
-
-.nav-link::after {
-  content: "";
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(135deg, #3b82f6, #9333ea);
-  transition: width 0.3s ease;
-}
-
-.nav-link:hover::after {
-  width: 100%;
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 1s ease-out forwards;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Enhanced responsive design */
-@media (max-width: 768px) {
-  .section-title {
-    @apply text-3xl md:text-4xl;
-  }
-
-  .glass-card {
-    border-radius: 16px;
-    padding: 1.5rem;
-  }
-
-  .modern-btn-primary,
-  .modern-btn-secondary {
-    @apply px-6 py-3 text-sm;
-  }
-}
-
-/* Enhanced loading states */
-.loading-shimmer {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.05) 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    rgba(255, 255, 255, 0.05) 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-/* Enhanced accessibility */
-@media (prefers-reduced-motion: reduce) {
-  .animate-fade-in-up,
-  .animate-bounce,
-  .animate-ping,
-  .animate-pulse,
-  .animate-spin {
-    animation: none;
-  }
-
-  .hover\:scale-105:hover,
-  .hover\:scale-110:hover {
-    transform: none;
-  }
-}
-
-/* Focus states */
-button:focus,
-a:focus,
-input:focus,
-textarea:focus {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #3b82f6, #9333ea);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #2563eb, #7c3aed);
-}
-</style>

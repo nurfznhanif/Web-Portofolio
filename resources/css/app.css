@@ -50,6 +50,7 @@ body {
     line-height: 1.6;
     color: var(--text-primary);
     overflow-x: hidden;
+    @apply bg-gray-900 text-white;
 }
 
 /* ===================================
@@ -961,6 +962,25 @@ select:focus {
    RESPONSIVE DESIGN
    ================================= */
 
+/* Responsive text utilities using @layer utilities instead of @responsive */
+@layer utilities {
+    .text-responsive-xs {
+        font-size: clamp(0.75rem, 2vw, 0.875rem);
+    }
+    .text-responsive-sm {
+        font-size: clamp(0.875rem, 2.5vw, 1rem);
+    }
+    .text-responsive-base {
+        font-size: clamp(1rem, 3vw, 1.125rem);
+    }
+    .text-responsive-lg {
+        font-size: clamp(1.125rem, 3.5vw, 1.25rem);
+    }
+    .text-responsive-xl {
+        font-size: clamp(1.25rem, 4vw, 1.5rem);
+    }
+}
+
 @media (min-width: 640px) {
     .container {
         padding: 0 1.5rem;
@@ -1219,67 +1239,13 @@ select:focus {
     }
 }
 
-/* Glassmorphism effects */
-.glass-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
+/* ===================================
+   ADDITIONAL UTILITIES
+   ================================= */
 
-/* Smooth transitions */
+/* Custom transitions */
 .transition-all {
     transition: all 0.3s ease;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-    width: 6px;
-}
-
-::-webkit-scrollbar-track {
-    background: #374151;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #6b7280;
-    border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #9ca3af;
-}
-
-/* Custom scrollbar untuk dark theme */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    @apply bg-gray-800;
-}
-
-::-webkit-scrollbar-thumb {
-    @apply bg-gray-600 rounded-full;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-500;
-}
-
-/* Custom animations */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.fade-in {
-    animation: fadeIn 0.3s ease-out;
 }
 
 /* Loading states */
@@ -1290,35 +1256,6 @@ select:focus {
 /* Form focus states */
 .form-input:focus {
     @apply ring-2 ring-blue-500 ring-opacity-50;
-}
-
-/* Custom transitions */
-.transition-all {
-    transition: all 0.3s ease;
-}
-
-/* Responsive text utilities */
-@responsive {
-    .text-responsive-xs {
-        font-size: clamp(0.75rem, 2vw, 0.875rem);
-    }
-    .text-responsive-sm {
-        font-size: clamp(0.875rem, 2.5vw, 1rem);
-    }
-    .text-responsive-base {
-        font-size: clamp(1rem, 3vw, 1.125rem);
-    }
-    .text-responsive-lg {
-        font-size: clamp(1.125rem, 3.5vw, 1.25rem);
-    }
-    .text-responsive-xl {
-        font-size: clamp(1.25rem, 4vw, 1.5rem);
-    }
-}
-
-/* Dark theme improvements */
-body {
-    @apply bg-gray-900 text-white;
 }
 
 /* Card hover effects */
