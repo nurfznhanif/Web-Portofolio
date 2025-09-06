@@ -7,6 +7,7 @@ use App\Models\PortfolioAnalytic;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AnalyticsController extends Controller
 {
@@ -48,14 +49,35 @@ class AnalyticsController extends Controller
 
     public function projects()
     {
-        $projectViews = PortfolioAnalytic::where('event_type', 'project_view')
-            ->selectRaw('JSON_UNQUOTE(JSON_EXTRACT(data, "$.project_title")) as project_title, COUNT(*) as views')
-            ->groupBy('project_title')
-            ->orderBy('views', 'desc')
-            ->get();
+        // Detect database driver and use appropriate JSON syntax
+        $driver = config('database.default');
+        $connection = config("database.connections.{$driver}.driver");
+
+        if ($connection === 'pgsql') {
+            // PostgreSQL syntax
+            $projectViews = PortfolioAnalytic::where('event_type', 'project_view')
+                ->selectRaw("data->>'project_title' as project_title, COUNT(*) as views")
+                ->whereNotNull('data')
+                ->groupBy(DB::raw("data->>'project_title'"))
+                ->orderBy('views', 'desc')
+                ->get();
+        } else {
+            // MySQL syntax (fallback)
+            $projectViews = PortfolioAnalytic::where('event_type', 'project_view')
+                ->selectRaw('JSON_UNQUOTE(JSON_EXTRACT(data, "$.project_title")) as project_title, COUNT(*) as views')
+                ->whereNotNull('data')
+                ->groupBy('project_title')
+                ->orderBy('views', 'desc')
+                ->get();
+        }
+
+        // Filter out null or empty project titles
+        $projectViews = $projectViews->filter(function ($item) {
+            return !empty($item->project_title) && $item->project_title !== 'null';
+        });
 
         return Inertia::render('Admin/Analytics/Projects', [
-            'projectViews' => $projectViews
+            'projectViews' => $projectViews->values() // Re-index the collection
         ]);
     }
 
