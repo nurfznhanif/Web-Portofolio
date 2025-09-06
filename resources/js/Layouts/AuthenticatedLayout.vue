@@ -5,9 +5,15 @@ import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
-import { Link } from "@inertiajs/vue3";
+import { Link, usePage } from "@inertiajs/vue3";
 
 const showingNavigationDropdown = ref(false);
+const page = usePage();
+
+// Helper function to check if current route matches
+const isCurrentRoute = (routeName) => {
+  return page.url.includes(routeName);
+};
 </script>
 
 <template>
@@ -22,7 +28,7 @@ const showingNavigationDropdown = ref(false);
             <div class="flex">
               <!-- Logo -->
               <div class="flex shrink-0 items-center">
-                <Link :href="route('dashboard')">
+                <Link href="/dashboard">
                   <ApplicationLogo
                     class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200"
                   />
@@ -32,10 +38,34 @@ const showingNavigationDropdown = ref(false);
               <!-- Navigation Links -->
               <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                 <NavLink
-                  :href="route('dashboard')"
-                  :active="route().current('dashboard')"
+                  href="/dashboard"
+                  :active="isCurrentRoute('/dashboard')"
                 >
                   Dashboard
+                </NavLink>
+                <NavLink
+                  href="/admin/portfolio"
+                  :active="isCurrentRoute('/admin/portfolio')"
+                >
+                  Portfolio
+                </NavLink>
+                <NavLink
+                  href="/admin/experience"
+                  :active="isCurrentRoute('/admin/experience')"
+                >
+                  Experience
+                </NavLink>
+                <NavLink
+                  href="/admin/skills"
+                  :active="isCurrentRoute('/admin/skills')"
+                >
+                  Skills
+                </NavLink>
+                <NavLink
+                  href="/admin/analytics"
+                  :active="isCurrentRoute('/admin/analytics')"
+                >
+                  Analytics
                 </NavLink>
               </div>
             </div>
@@ -69,14 +99,11 @@ const showingNavigationDropdown = ref(false);
                   </template>
 
                   <template #content>
-                    <DropdownLink :href="route('profile.edit')">
-                      Profile
+                    <DropdownLink href="/profile"> Profile </DropdownLink>
+                    <DropdownLink href="/admin/profile-settings">
+                      Settings
                     </DropdownLink>
-                    <DropdownLink
-                      :href="route('logout')"
-                      method="post"
-                      as="button"
-                    >
+                    <DropdownLink href="/logout" method="post" as="button">
                       Log Out
                     </DropdownLink>
                   </template>
@@ -132,10 +159,34 @@ const showingNavigationDropdown = ref(false);
         >
           <div class="space-y-1 pb-3 pt-2">
             <ResponsiveNavLink
-              :href="route('dashboard')"
-              :active="route().current('dashboard')"
+              href="/dashboard"
+              :active="isCurrentRoute('/dashboard')"
             >
               Dashboard
+            </ResponsiveNavLink>
+            <ResponsiveNavLink
+              href="/admin/portfolio"
+              :active="isCurrentRoute('/admin/portfolio')"
+            >
+              Portfolio
+            </ResponsiveNavLink>
+            <ResponsiveNavLink
+              href="/admin/experience"
+              :active="isCurrentRoute('/admin/experience')"
+            >
+              Experience
+            </ResponsiveNavLink>
+            <ResponsiveNavLink
+              href="/admin/skills"
+              :active="isCurrentRoute('/admin/skills')"
+            >
+              Skills
+            </ResponsiveNavLink>
+            <ResponsiveNavLink
+              href="/admin/analytics"
+              :active="isCurrentRoute('/admin/analytics')"
+            >
+              Analytics
             </ResponsiveNavLink>
           </div>
 
@@ -153,14 +204,11 @@ const showingNavigationDropdown = ref(false);
             </div>
 
             <div class="mt-3 space-y-1">
-              <ResponsiveNavLink :href="route('profile.edit')">
-                Profile
+              <ResponsiveNavLink href="/profile"> Profile </ResponsiveNavLink>
+              <ResponsiveNavLink href="/admin/profile-settings">
+                Settings
               </ResponsiveNavLink>
-              <ResponsiveNavLink
-                :href="route('logout')"
-                method="post"
-                as="button"
-              >
+              <ResponsiveNavLink href="/logout" method="post" as="button">
                 Log Out
               </ResponsiveNavLink>
             </div>
