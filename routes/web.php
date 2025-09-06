@@ -51,7 +51,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
 
     // Profile Settings
     Route::get('/profile-settings', [ProfileSettingController::class, 'index'])->name('profile.settings');
-    Route::put('/profile-settings', [ProfileSettingController::class, 'update'])->name('profile.settings.update');
+    Route::post('/profile-settings', [ProfileSettingController::class, 'update'])->name('profile.settings.update');
 
     // Analytics
     Route::prefix('analytics')->name('analytics.')->group(function () {
