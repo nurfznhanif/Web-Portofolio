@@ -19,6 +19,20 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+
+            // Add password tracking fields
+            $table->timestamp('password_changed_at')->nullable()->after('password');
+            $table->timestamp('last_login_at')->nullable()->after('password_changed_at');
+            $table->string('last_login_ip')->nullable()->after('last_login_at');
+            $table->text('last_login_user_agent')->nullable()->after('last_login_ip');
+
+            // Optional: Add avatar field for profile pictures
+            $table->string('avatar')->nullable()->after('last_login_user_agent');
+
+            // Optional: Add two-factor authentication fields
+            $table->timestamp('two_factor_enabled_at')->nullable()->after('avatar');
+            $table->text('two_factor_secret')->nullable()->after('two_factor_enabled_at');
+            $table->text('two_factor_recovery_codes')->nullable()->after('two_factor_secret');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -42,8 +56,17 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('sessions');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn([
+                'password_changed_at',
+                'last_login_at',
+                'last_login_ip',
+                'last_login_user_agent',
+                'avatar',
+                'two_factor_enabled_at',
+                'two_factor_secret',
+                'two_factor_recovery_codes'
+            ]);
+        });
     }
 };
