@@ -177,19 +177,19 @@ class PortfolioPublicController extends Controller
     {
         return (object) [
             'name' => 'Nurfauzan Hanif',
-            'title' => 'Fullstack Developer',
-            'summary' => 'Computer Science graduate with intermediate skills in PHP, Python, and JavaScript programming.',
+            'title' => 'Title',
+            'summary' => 'Summary',
             'email' => 'nrfznhnf@gmail.com',
             'phone' => '0822-8568-5679',
             'location' => 'Pekanbaru, Riau',
             'photo' => null,
             'education' => [
-                'degree' => 'Bachelor of Computer Science',
+                'degree' => 'Bachelor of Informatics Engineering',
                 'university' => 'Universitas Islam Riau',
                 'gpa' => '3.76',
-                'graduation_year' => '2024',
+                'graduation_year' => '2025',
             ],
-            'thesis_title' => 'Aspect-Based Sentiment Analysis on Generation Gold 2045 Discourse in Social Media using Latent Dirichlet Allocation and Bidirectional Encoder Representations from Transformers (BERT)',
+            'thesis_title' => 'Aspect-Based Sentiment Analysis of the 2045 Golden Generation Discourse on Social Media Using Latent Dirichlet Allocation and Bidirectional Encoder Representation Transformers',
             'availability' => [
                 'status' => 'Available for opportunities',
                 'type' => 'full-time',
