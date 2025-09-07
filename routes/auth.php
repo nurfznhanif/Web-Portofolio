@@ -52,7 +52,16 @@ Route::middleware('auth')->group(function () {
 
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
 
+    // Password Management Routes
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');
+
+    // AJAX Password Utilities (Optional - for enhanced features)
+    Route::middleware('throttle:10,1')->group(function () {
+        Route::post('password/check-strength', [PasswordController::class, 'checkStrength'])
+            ->name('password.check-strength');
+        Route::post('password/generate', [PasswordController::class, 'generatePassword'])
+            ->name('password.generate');
+    });
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
