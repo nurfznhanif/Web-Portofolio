@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nurfauzan Hanif — Web Developer &amp; Data Analyst</title>
+  <meta name="description" content="Portfolio of Nurfauzan Hanif — Informatics Engineering graduate, full-stack web developer, and data analyst based in Pekanbaru, Indonesia. Building Laravel &amp; Vue applications and data dashboards." />
+  <meta name="author" content="Nurfauzan Hanif" />
+  <meta name="theme-color" content="#F5F1E9" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Nurfauzan Hanif — Web Developer &amp; Data Analyst" />
+  <meta property="og:description" content="Full-stack web developer &amp; data analyst. Laravel, Vue, Python, Power BI." />
+  <meta property="og:image" content="Assets/profile.jpg" />
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/styles.css" />
+  <noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
+</head>
+<body>
+  <!-- Grain / paper texture overlay -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Progress bar -->
+  <div class="scroll-progress" aria-hidden="true"><span></span></div>
+
+  <!-- ===== Header ===== -->
+  <header class="site-header" id="top">
+    <div class="wrap header-inner">
+      <a href="#top" class="brand" aria-label="Nurfauzan Hanif — home">
+        <span class="brand-mark">NH</span>
+        <span class="brand-name">Nurfauzan&nbsp;Hanif</span>
+      </a>
+
+      <nav class="nav" aria-label="Primary">
+        <a href="#about" data-i18n="nav.about">About</a>
+        <a href="#experience" data-i18n="nav.experience">Experience</a>
+        <a href="#work" data-i18n="nav.work">Work</a>
+        <a href="#skills" data-i18n="nav.skills">Skills</a>
+        <a href="#contact" data-i18n="nav.contact">Contact</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="lang-toggle" id="langToggle" type="button" aria-label="Switch language / Ganti bahasa">
+          <span data-lang="en">EN</span><span class="lang-sep">/</span><span data-lang="id">ID</span>
+        </button>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode" aria-pressed="false">
+          <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
+          <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.6A8.2 8.2 0 1 1 9.4 3.5a6.6 6.6 0 0 0 11.1 11.1Z"/></svg>
+        </button>
+        <a href="#contact" class="btn btn-sm btn-ghost header-cta" data-i18n="cta.talk">Let's talk</a>
+        <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open menu" aria-expanded="false">
+          <span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile menu -->
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <nav aria-label="Mobile">
+      <a href="#about"><span class="mm-num">01</span> <span data-i18n="nav.about">About</span></a>
+      <a href="#experience"><span class="mm-num">02</span> <span data-i18n="nav.experience">Experience</span></a>
+      <a href="#work"><span class="mm-num">03</span> <span data-i18n="nav.work">Work</span></a>
+      <a href="#skills"><span class="mm-num">04</span> <span data-i18n="nav.skills">Skills</span></a>
+      <a href="#contact"><span class="mm-num">05</span> <span data-i18n="nav.contact">Contact</span></a>
+    </nav>
+  </div>
+
+  <main>
+    <!-- ===== Hero ===== -->
+    <section class="hero" id="hero">
+      <div class="wrap hero-inner">
+        <div class="hero-text">
+          <p class="eyebrow reveal"><span class="dot"></span> <span data-i18n="hero.eyebrow">Pekanbaru, Indonesia — available for work</span></p>
+          <h1 class="hero-title reveal">
+            Nurfauzan<br /><span class="ital">Hanif</span>
+          </h1>
+          <p class="hero-roles reveal" data-i18n="hero.roles">Full-stack Web Developer <span class="sep">·</span> Data Analyst</p>
+          <p class="hero-lede reveal" data-i18n="hero.lede">
+            I design and build web applications and data dashboards — from
+            <em>Laravel &amp; Vue</em> platforms to <em>Power BI</em> analytics —
+            turning messy requirements into calm, dependable products.
+          </p>
+          <div class="hero-cta reveal">
+            <a href="#work" class="btn btn-primary"><span data-i18n="cta.viewwork">View selected work</span> <svg viewBox="0 0 24 24" class="i-arrow" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a href="Assets/CV%20-%20Nurfauzan%20Hanif.pdf" class="btn btn-ghost" download="CV - Nurfauzan Hanif.pdf" id="cvLink" data-i18n="cta.cv">Download CV</a>
+          </div>
+          <ul class="hero-socials reveal" aria-label="Social links">
+            <li><a href="https://www.linkedin.com/in/nrfznhnf/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2 2 0 1 1 0 4 2 2 0 0 1 0-4ZM3.5 9h3v11.5h-3V9Zm5.5 0h2.87v1.57h.04c.4-.76 1.38-1.57 2.84-1.57 3.04 0 3.6 2 3.6 4.6v6.9h-3v-6.12c0-1.46-.03-3.34-2.03-3.34-2.03 0-2.34 1.59-2.34 3.23v6.23H9V9Z"/></svg></a></li>
+            <li><a href="https://www.instagram.com/nrfznhnf/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5"/><circle cx="12" cy="12" r="4.1"/><circle cx="17.3" cy="6.7" r="1.2" fill="currentColor" stroke="none"/></svg></a></li>
+            <li><a href="https://github.com/nurfznhanif" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z" stroke="none" fill="currentColor"/></svg></a></li>
+            <li><a href="mailto:nrfznhnf@gmail.com" aria-label="Email"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.4"/><path d="m4 7 8 6 8-6"/></svg></a></li>
+          </ul>
+        </div>
+
+        <div class="hero-media reveal">
+          <div class="portrait">
+            <img src="Assets/profile.jpg" alt="Portrait of Nurfauzan Hanif" width="800" height="800" />
+            <div class="portrait-badge">
+              <span class="pb-top" data-i18n="badge.major">Informatics Engineering</span>
+              <span class="pb-bot">Universitas Islam Riau</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wrap hero-stats-wrap">
+        <ul class="hero-stats reveal">
+          <li><span class="stat-num">3.76</span><span class="stat-label" data-i18n="stat.gpa">GPA</span></li>
+          <li><span class="stat-num">12</span><span class="stat-label" data-i18n="stat.projects">Selected projects</span></li>
+          <li><span class="stat-num">11</span><span class="stat-label" data-i18n="stat.courses">Courses as assistant</span></li>
+          <li><span class="stat-num">BRI</span><span class="stat-label" data-i18n="stat.office">Regional Office II</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===== About ===== -->
+    <section class="section about" id="about">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="section-index">01</span>
+          <h2 class="section-title" data-i18n="sec.about">About</h2>
+        </div>
+        <div class="about-grid">
+          <div class="about-lead reveal">
+            <p class="lead-big" data-i18n="about.lead">
+              Informatics Engineering graduate with a builder's instinct — equally at home
+              wiring up a database, shipping a Vue interface, or modelling data for a dashboard.
+            </p>
+            <p data-i18n="about.p1">
+              I have intermediate proficiency in <strong>PHP</strong>, <strong>Python</strong>,
+              and <strong>JavaScript</strong>, and I enjoy working across the whole stack — from
+              back-end APIs to polished front-ends. My interests run through web development,
+              mobile development, artificial intelligence, and data analysis.
+            </p>
+            <p data-i18n="about.p2">
+              Active in campus and community organisations and experienced as a teaching
+              assistant, I bring a collaborative, level-headed approach to every team I join —
+              and a genuine drive to keep learning.
+            </p>
+          </div>
+
+          <aside class="about-facts reveal">
+            <div class="fact">
+              <span class="fact-k" data-i18n="fact.edu.k">Education</span>
+              <span class="fact-v" data-i18n="fact.edu.v">B.Eng. Informatics Engineering</span>
+              <span class="fact-sub" data-i18n="fact.edu.sub">Universitas Islam Riau · GPA 3.76</span>
+            </div>
+            <div class="fact">
+              <span class="fact-k" data-i18n="fact.now.k">Currently</span>
+              <span class="fact-v" data-i18n="fact.now.v">Assistant — Regional Strategy &amp; Finance</span>
+              <span class="fact-sub" data-i18n="fact.now.sub">PT Mutualplus @ BRI Regional Office II Pekanbaru</span>
+            </div>
+            <div class="fact">
+              <span class="fact-k" data-i18n="fact.loc.k">Based in</span>
+              <span class="fact-v">Pekanbaru, Riau</span>
+              <span class="fact-sub" data-i18n="fact.loc.sub">Indonesia · open to relocation</span>
+            </div>
+            <div class="fact">
+              <span class="fact-k" data-i18n="fact.lang.k">Languages</span>
+              <span class="fact-v" data-i18n="fact.lang.v">Indonesian — Native</span>
+              <span class="fact-sub" data-i18n="fact.lang.sub">English — Basic</span>
+            </div>
+          </aside>
+        </div>
+
+        <div class="thesis reveal">
+          <span class="thesis-tag" data-i18n="thesis.tag">Undergraduate thesis</span>
+          <p class="thesis-title" data-i18n="thesis.title">
+            Aspect-Based Sentiment Analysis of the “Generasi Emas 2045” Discourse on Social Media
+            using Latent Dirichlet Allocation (LDA) and BERT
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Experience ===== -->
+    <section class="section experience" id="experience">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="section-index">02</span>
+          <h2 class="section-title" data-i18n="sec.experience">Experience</h2>
+        </div>
+
+        <ol class="timeline">
+          <li class="tl-item reveal">
+            <div class="tl-when" data-i18n="exp1.when">Nov 2025 — Present</div>
+            <div class="tl-body">
+              <h3 class="tl-role" data-i18n="exp1.role">Assistant — Regional Strategy &amp; Finance</h3>
+              <p class="tl-org" data-i18n="exp1.org">PT Mutualplus (outsourced) @ BRI Regional Office II Pekanbaru</p>
+              <p class="tl-desc" data-i18n="exp1.desc">
+                Building performance-monitoring dashboards for the regional and branch offices in
+                Power BI. Designed and built a monitoring dashboard from scratch with Laravel,
+                Vue.js, Inertia.js, and PostgreSQL. Produced 2026 market-share forecasts to
+                support regional strategic planning.
+              </p>
+            </div>
+          </li>
+          <li class="tl-item reveal">
+            <div class="tl-when" data-i18n="exp2.when">Oct 2023 — Jun 2025</div>
+            <div class="tl-body">
+              <h3 class="tl-role" data-i18n="exp2.role">Teaching Assistant</h3>
+              <p class="tl-org">Universitas Islam Riau</p>
+              <p class="tl-desc" data-i18n="exp2.desc">
+                Supported teaching for eleven courses: Databases, Introduction to Programming,
+                Data Structures, Component-Based Programming, Artificial Intelligence, Mobile
+                Programming Fundamentals, Design &amp; Analysis of Algorithms, Graph Databases,
+                Native Mobile App Development, Fuzzy Logic, and Machine Learning.
+              </p>
+            </div>
+          </li>
+          <li class="tl-item reveal">
+            <div class="tl-when">Nov 2023 — Sep 2024</div>
+            <div class="tl-body">
+              <h3 class="tl-role" data-i18n="exp3.role">Chairman</h3>
+              <p class="tl-org" data-i18n="exp3.org">PRIMATECH Programming Study Club — Universitas Islam Riau</p>
+              <p class="tl-desc" data-i18n="exp3.desc">Led the campus programming study club — organising sessions, mentoring, and coordinating members.</p>
+            </div>
+          </li>
+          <li class="tl-item reveal">
+            <div class="tl-when">Nov 2023 — Nov 2024</div>
+            <div class="tl-body">
+              <h3 class="tl-role" data-i18n="exp4.role">Organisational Supervisory Board</h3>
+              <p class="tl-org">Himpunan Mahasiswa Perhentian Raja</p>
+              <p class="tl-desc" data-i18n="exp4.desc">Oversaw organisational governance and supported programme accountability.</p>
+            </div>
+          </li>
+          <li class="tl-item reveal">
+            <div class="tl-when" data-i18n="exp5.when">May 2024</div>
+            <div class="tl-body">
+              <h3 class="tl-role" data-i18n="exp5.role">Event Division Head</h3>
+              <p class="tl-org">Kemah Bakti Mahasiswa — Himpunan Mahasiswa Teknik Informatika</p>
+              <p class="tl-desc" data-i18n="exp5.desc">Led the events division for the student community-service camp.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ===== Work ===== -->
+    <section class="section work" id="work">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="section-index">03</span>
+          <h2 class="section-title" data-i18n="sec.work">Selected Work</h2>
+          <p class="section-sub" data-i18n="work.sub">Twelve projects across web development, data analytics, and community initiatives. Click any card for the full story.</p>
+        </div>
+
+        <div class="filters reveal" role="tablist" aria-label="Filter projects">
+          <button class="filter is-active" data-filter="all" role="tab" aria-selected="true" data-i18n="filter.all">All</button>
+          <button class="filter" data-filter="web" role="tab" aria-selected="false" data-i18n="filter.web">Web Apps</button>
+          <button class="filter" data-filter="data" role="tab" aria-selected="false" data-i18n="filter.data">Data &amp; Dashboards</button>
+          <button class="filter" data-filter="community" role="tab" aria-selected="false" data-i18n="filter.community">Community</button>
+        </div>
+
+        <div class="projects-grid" id="projectsGrid">
+          <!-- injected by js -->
+        </div>
+        <noscript>
+          <p style="margin-top:2rem">Enable JavaScript to browse the interactive project gallery, or view the projects on <a href="https://github.com/nurfznhanif">GitHub</a>.</p>
+        </noscript>
+      </div>
+    </section>
+
+    <!-- ===== Skills ===== -->
+    <section class="section skills" id="skills">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="section-index">04</span>
+          <h2 class="section-title" data-i18n="sec.skills">Skills &amp; Stack</h2>
+        </div>
+
+        <div class="skills-grid">
+          <article class="skill-card reveal">
+            <h3 class="skill-h"><span class="skill-ic" aria-hidden="true">&lt;/&gt;</span> <span data-i18n="skill.web.h">Web Development</span></h3>
+            <p data-i18n="skill.web.p">Building web applications end-to-end with PHP and JavaScript — from database and API to a responsive interface — using frameworks like Laravel, Vue.js, and React.js.</p>
+          </article>
+          <article class="skill-card reveal">
+            <h3 class="skill-h"><span class="skill-ic" aria-hidden="true">◐</span> <span data-i18n="skill.data.h">Data Analysis</span></h3>
+            <p data-i18n="skill.data.p">Exploring, forecasting, and visualising data with Python — from Power BI dashboards (DAX, data modelling) to time-series forecasting, web scraping, and interactive maps.</p>
+          </article>
+          <article class="skill-card reveal">
+            <h3 class="skill-h"><span class="skill-ic" aria-hidden="true">▢</span> <span data-i18n="skill.mobile.h">Mobile Development</span></h3>
+            <p data-i18n="skill.mobile.p">Creating cross-platform Android &amp; iOS apps with React Native — responsive, functional interfaces from a single codebase.</p>
+          </article>
+        </div>
+
+        <div class="stack reveal">
+          <span class="stack-label" data-i18n="stack.label">Tools &amp; technologies</span>
+          <ul class="stack-list">
+            <li>Laravel</li><li>Vue.js</li><li>React.js</li><li>React Native</li><li>Inertia.js</li>
+            <li>CodeIgniter</li><li>Yii2</li><li>PHP</li><li>Python</li><li>JavaScript</li>
+            <li>PostgreSQL</li><li>MySQL</li><li>Tailwind CSS</li><li>Bootstrap</li>
+            <li>Power BI</li><li>DAX</li><li>Prophet</li><li>Streamlit</li><li>FastAPI</li><li>Leaflet</li><li>Chart.js</li><li>Git</li><li>Vite</li>
+          </ul>
+        </div>
+
+        <div class="soft-grid reveal">
+          <div class="soft">
+            <h4 data-i18n="soft.lead.h">Leadership</h4>
+            <p data-i18n="soft.lead.p">Comfortable leading teams in academic and organisational settings — directing, motivating, and supporting people toward a shared goal.</p>
+          </div>
+          <div class="soft">
+            <h4 data-i18n="soft.comm.h">Communication</h4>
+            <p data-i18n="soft.comm.p">Conveying information clearly and effectively, in writing and in person, across a range of stakeholders.</p>
+          </div>
+          <div class="soft">
+            <h4 data-i18n="soft.team.h">Teamwork</h4>
+            <p data-i18n="soft.team.p">Working well across backgrounds — listening, giving constructive input, and getting group work done well.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Contact ===== -->
+    <section class="section contact" id="contact">
+      <div class="wrap">
+        <div class="contact-inner reveal">
+          <span class="section-index light">05</span>
+          <h2 class="contact-title" data-i18n="contact.title">Let's build something<br /><span class="ital">worth keeping.</span></h2>
+          <p class="contact-lede" data-i18n="contact.lede">
+            Open to full-stack development and data-analytics roles, freelance projects, and
+            collaborations. The fastest way to reach me is email.
+          </p>
+
+          <ul class="contact-links">
+            <li><a href="mailto:nrfznhnf@gmail.com"><span class="cl-k">Email</span><span class="cl-v">nrfznhnf@gmail.com</span></a></li>
+            <li><a href="tel:+6282285685679"><span class="cl-k" data-i18n="c.phone">Phone</span><span class="cl-v">+62 822-8568-5679</span></a></li>
+            <li><a href="https://www.linkedin.com/in/nrfznhnf/" target="_blank" rel="noopener"><span class="cl-k">LinkedIn</span><span class="cl-v">/in/nrfznhnf</span></a></li>
+            <li><a href="https://www.instagram.com/nrfznhnf/" target="_blank" rel="noopener"><span class="cl-k">Instagram</span><span class="cl-v">@nrfznhnf</span></a></li>
+            <li><a href="https://github.com/nurfznhanif" target="_blank" rel="noopener"><span class="cl-k">GitHub</span><span class="cl-v">/nurfznhanif</span></a></li>
+            <li><span class="cl-static"><span class="cl-k" data-i18n="c.location">Location</span><span class="cl-v">Pekanbaru, Riau · ID</span></span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <span class="foot-brand">Nurfauzan Hanif</span>
+      <span class="foot-note"><span data-i18n="footer.note">Designed &amp; built with care · </span><span id="year"></span></span>
+      <a href="#top" class="foot-top"><span data-i18n="footer.top">Back to top</span> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+    </div>
+  </footer>
+
+  <!-- ===== Project modal ===== -->
+  <div class="modal" id="projectModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-panel" role="document">
+      <button class="modal-close" data-close aria-label="Close">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+      <div class="modal-scroll" id="modalScroll"><!-- injected --></div>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

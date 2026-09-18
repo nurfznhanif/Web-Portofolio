@@ -1,61 +1,47 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Nurfauzan Hanif — Portfolio
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A warm, editorial single-page portfolio website. Built as a static site (HTML, CSS, vanilla JavaScript) — no build step, no dependencies.
 
-## About Laravel
+## Structure
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+```
+WebPorto/
+├── index.html            # the whole page
+├── css/styles.css        # design system + all sections (light & dark themes)
+├── js/main.js            # project data, filtering, lightbox modal, interactions
+├── favicon.svg           # "NH" monogram tab icon
+└── Assets/
+    ├── profile.jpg              # hero portrait (optimized)
+    ├── CV - Nurfauzan Hanif.pdf # downloadable CV (matches the site style)
+    └── projects/               # optimized project screenshots
+```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Preview locally
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Because the page loads local files (CSS, JS, images), open it through a small web server rather than double-clicking the file:
 
-## Learning Laravel
+```bash
+python -m http.server 8123
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Then visit http://127.0.0.1:8123 in your browser.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Deploy (free options)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Any static host works. Easiest paths:
 
-## Laravel Sponsors
+- **GitHub Pages** — push this folder to a repo, then enable Pages on the `main` branch (root).
+- **Netlify** — drag-and-drop the `WebPorto` folder onto https://app.netlify.com/drop.
+- **Vercel** — `vercel` in this folder, accept the static defaults.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Editing content
 
-### Premium Partners
+- **Projects** live in the `PROJECTS` array in `js/main.js`. Translatable fields (`title`, `role`, `context`, `blurb`, `desc`, `note`) hold `{ en, id }` — edit both, or pass a plain string if a field is the same in both languages. `tech`, `repo`, and the cover/screenshots stay as-is.
+- **Text sections** (About, Experience, Skills, Contact) are plain HTML in `index.html`. Each translatable element has a `data-i18n="key"`; the English text lives in the HTML, and the Indonesian text lives in the `ID` dictionary in `js/main.js` under the same key. To edit English, change the HTML; to edit Indonesian, change the dictionary.
+- **Colors & type** are CSS variables at the top of `css/styles.css` (`--accent`, `--bg`, `--ink`, fonts). Change `--accent` to reskin the whole site.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Notes
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- **Bilingual (EN / ID)** — a language toggle in the header switches the whole site, including project details; the choice is remembered. English is the default; to make Indonesian the default, change the fallback in the `applyLang(...)` call near the bottom of `js/main.js`.
+- **Light / dark theme** follows the visitor's system setting and can be toggled; the choice is remembered.
+- Fully responsive, keyboard-accessible modal, and reduced-motion friendly.
