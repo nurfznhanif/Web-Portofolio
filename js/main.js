@@ -48,7 +48,7 @@
     "sec.experience": "Pengalaman",
     "exp1.when": "Nov 2025 — Sekarang", "exp1.role": "Asisten — Regional Strategy &amp; Finance",
     "exp1.org": "PT Bank Rakyat Indonesia, Tbk — Kantor Wilayah II Pekanbaru",
-    "exp1.desc": "Membangun dasbor pemantauan kinerja untuk kantor wilayah dan kantor cabang menggunakan Power BI. Merancang dan membangun dasbor pemantauan dari nol dengan Laravel, Vue.js, Inertia.js, dan PostgreSQL. Membuat prakiraan pangsa pasar 2026 untuk mendukung perencanaan strategis wilayah.",
+    "exp1.desc": "Membangun dasbor pemantauan kinerja untuk kantor wilayah dan kantor cabang menggunakan Power BI. Merancang dan membangun dasbor pemantauan dari nol dengan Laravel, Vue.js, Inertia.js, dan PostgreSQL. Membuat prakiraan pangsa pasar 2026 dan 2027 untuk mendukung perencanaan strategis wilayah.",
     "exp2.when": "Okt 2023 — Jun 2025", "exp2.role": "Asisten Dosen",
     "exp2.desc": "Mendampingi proses belajar untuk sebelas mata kuliah: Basis Data, Pengenalan Pemrograman, Struktur Data, Pemrograman Berbasis Komponen, Kecerdasan Buatan, Dasar Pemrograman Mobile, Desain &amp; Analisis Algoritma, Basis Data Grafik, Pembangunan Aplikasi Seluler Native, Logika Samar, dan Pembelajaran Mesin.",
     "exp3.role": "Ketua", "exp3.org": "Study Club Programming PRIMATECH — Universitas Islam Riau",
