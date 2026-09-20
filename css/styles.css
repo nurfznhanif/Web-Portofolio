@@ -511,8 +511,8 @@ button { font-family: inherit; cursor: pointer; }
   .header-cta { display: none; }
   .menu-toggle { display: block; }
   .hero-inner { grid-template-columns: 1fr; }
-  .hero-media { order: -1; justify-content: flex-start; }
-  .portrait { width: min(260px, 60%); }
+  .hero-media { order: -1; justify-content: center; }
+  .portrait { width: min(280px, 66%); }
   .portrait img { border-radius: 160px 160px 14px 14px; }
   .about-grid { grid-template-columns: 1fr; }
   .skills-grid { grid-template-columns: 1fr; }
